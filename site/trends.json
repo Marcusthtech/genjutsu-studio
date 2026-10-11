@@ -428,6 +428,151 @@
           ]
         ]
       }
+    },
+    {
+      "slug": "mafia-daughter",
+      "name": "Mafia Daughter: The Entrance",
+      "short": "Mafia Daughter entrance",
+      "card_blurb": "Walk through a crowd of men in black like the mafia boss's daughter. One photo.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/mafia-daughter.mp4",
+      "poster": "trends/mafia-daughter/poster.jpg",
+      "preview_url": "trends/mafia-daughter/preview.mp4",
+      "duration": 29.96,
+      "mode": "motion-transfer",
+      "resolution": "480p",
+      "prompt": "Replace the woman in the white dress with the uploaded picture. Keep the crowd of men in black, the building, her white dress, the choreography, camera movement and timing.",
+      "slots": [
+        {
+          "label": "You",
+          "hint": "The woman in white",
+          "example": "assets/examples/white-chicks-b.jpg"
+        }
+      ],
+      "published": "2026-10-12",
+      "seo": {
+        "title": "Mafia Daughter AI Video Generator: Crowd Entrance Trend (No Subscription)",
+        "description": "Star in the viral \"mafia boss's daughter\" entrance: walk through a crowd of men in black. Add one photo and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "Mafia Daughter AI Video Generator",
+        "lead": "Walk through a crowd of men in black like the <b>mafia boss's daughter</b>. The scene is locked in: add one photo and click Generate.",
+        "og_title": "Mafia Daughter AI Video: Your Crowd Entrance",
+        "og_tagline": "Mafia daughter AI trend · Genjutsu · No subscription",
+        "about_html": "<p>The \"mafia boss's daughter\" trend took off on TikTok in Thailand: a woman in a white dress moves through a huge crowd of men in black who part, bow and dance around her. Creators made it with Higgsfield Genjutsu, and now anyone can put their own face in the lead.</p><p><a href=\"../../genjutsu/\">Genjutsu</a> keeps the original crowd, choreography and camera moves and rebuilds the lead from your photo, so it looks like you were really there.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The crowd scene and the prompt are already loaded. You don't need to find the video."
+          ],
+          [
+            "Add your photo",
+            "One clear, front-facing, well-lit photo of the person who'll play the lead."
+          ],
+          [
+            "Click Generate",
+            "480p is the default. You'll see the exact price first, and the video renders in a few minutes."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with the original sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How do I make the mafia daughter AI video?",
+            "Open this page, add one photo of yourself and click Generate. The crowd scene is already loaded."
+          ],
+          [
+            "How much does it cost?",
+            "The 30-second clip at 480p costs 577 credits (about $5.77). 720p and 1080p are sharper and cost more. No subscription."
+          ],
+          [
+            "Does it have to be a woman?",
+            "No. Anyone can take the lead. The dress and choreography stay the same."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
+    },
+    {
+      "slug": "shrek-raindance",
+      "name": "Shrek & Lord Farquaad: Raindance",
+      "short": "Shrek Raindance scene",
+      "card_blurb": "Shrek and Lord Farquaad's beach and dock moment to \"Raindance\". Become the two of them.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/shrek-raindance.mp4",
+      "poster": "trends/shrek-raindance/poster.jpg",
+      "preview_url": "trends/shrek-raindance/preview.mp4",
+      "duration": 28.97,
+      "mode": "motion-transfer",
+      "resolution": "480p",
+      "prompt": "Replace Shrek (the green ogre) with the first uploaded picture and Lord Farquaad (the man in the red hat and red outfit) with the second uploaded picture, as realistic people. Keep their outfits, the dock, the beach and the sea, the poses, expressions, camera cuts and timing.",
+      "slots": [
+        {
+          "label": "Shrek",
+          "hint": "The green ogre",
+          "example": "assets/examples/white-chicks-a.jpg"
+        },
+        {
+          "label": "Lord Farquaad",
+          "hint": "Red hat and outfit",
+          "example": "assets/examples/white-chicks-b.jpg"
+        }
+      ],
+      "published": "2026-10-12",
+      "seo": {
+        "title": "Shrek Raindance AI Video Generator: Shrek & Lord Farquaad Face Swap (No Subscription)",
+        "description": "Put two faces in the viral Shrek and Lord Farquaad \"Raindance\" video. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "Shrek & Lord Farquaad AI Video Generator",
+        "lead": "The viral <b>Shrek and Lord Farquaad</b> beach moment set to \"Raindance\". The clip is locked in: add a photo for each and click Generate.",
+        "og_title": "Shrek Raindance AI Video: Be Shrek and Lord Farquaad",
+        "og_tagline": "Shrek AI face swap · Genjutsu · No subscription",
+        "about_html": "<p>A realistic AI take on Shrek and Lord Farquaad, staring out at the sea on a dock and a beach to Dave and Tems' \"Raindance\", went viral on TikTok and Instagram. The trend: you and a friend become the two of them.</p><p><a href=\"../../genjutsu/\">Genjutsu</a> keeps the original poses, close-ups and timing and rebuilds both characters from your photos, outfits included.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The Shrek clip and the prompt are already loaded."
+          ],
+          [
+            "Add two photos",
+            "The first photo becomes Shrek and the second becomes Lord Farquaad. Use clear, front-facing photos."
+          ],
+          [
+            "Click Generate",
+            "480p is the default. You'll see the exact price first, and the video renders in a few minutes."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with \"Raindance\" as the sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How do I make the Shrek Raindance AI video?",
+            "Open this page, add one photo for Shrek and one for Lord Farquaad, then click Generate."
+          ],
+          [
+            "How much does it cost?",
+            "The 29-second clip at 480p costs 562 credits (about $5.62). 720p and 1080p are sharper and cost more. No subscription."
+          ],
+          [
+            "Who goes where?",
+            "Photo 1 is Shrek (green ogre) and photo 2 is Lord Farquaad (red hat)."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
     }
   ]
 }
