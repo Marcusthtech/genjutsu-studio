@@ -10,7 +10,7 @@
       "poster": "trends/white-chicks/poster.jpg",
       "duration": 18.4,
       "mode": "motion-transfer",
-      "resolution": "720p",
+      "resolution": "480p",
       "prompt": "Replace both characters with the uploaded pictures",
       "slots": [
         {
@@ -43,8 +43,8 @@
             "Add one photo for the person on the left (passenger seat) and one for the person on the right (Terry Crews' seat, the driver). Use clear, front-facing, well-lit photos with one face each."
           ],
           [
-            "Keep 720p",
-            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+            "Keep 480p",
+            "480p is the default: it's the cheapest and looks fine on TikTok, Reels and Shorts. Pick 720p or 1080p for a sharper video."
           ],
           [
             "Click Generate",
@@ -66,7 +66,7 @@
           ],
           [
             "How much does the White Chicks AI video cost?",
-            "The full 19-second car scene at 720p costs 747 credits (about $7.47). 480p is cheaper and 1080p is sharper."
+            "The full 19-second car scene at 480p costs 403 credits (about $4.03). 720p and 1080p are sharper and cost more."
           ],
           [
             "Is there a White Chicks AI template without CapCut?",
@@ -98,7 +98,7 @@
       "preview_url": "trends/hotel-lobby/preview.mp4",
       "duration": 15.1,
       "mode": "motion-transfer",
-      "resolution": "720p",
+      "resolution": "480p",
       "prompt": "Replace the person on the left with the first uploaded picture and the person on the right with the second uploaded picture. Keep the orange background, microphone, outfits, motion, camera and timing.",
       "slots": [
         {
@@ -131,8 +131,8 @@
             "Add one photo for the person on the left (Takeoff, striped shirt) and one for the person on the right (Quavo, orange shirt). Use clear, front-facing, well-lit photos with one face each."
           ],
           [
-            "Keep 720p",
-            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+            "Keep 480p",
+            "480p is the default: it's the cheapest and looks fine on TikTok, Reels and Shorts. Pick 720p or 1080p for a sharper video."
           ],
           [
             "Click Generate",
@@ -150,7 +150,7 @@
           ],
           [
             "How much does the Hotel Lobby AI video cost?",
-            "The full 16-second clip at 720p costs 645 credits (about $6.45). 480p is cheaper and 1080p is sharper. No subscription."
+            "The full 16-second clip at 480p costs 355 credits (about $3.55). 720p and 1080p are sharper and cost more. No subscription."
           ],
           [
             "Who goes where?",
@@ -177,7 +177,7 @@
       "preview_url": "trends/alors-on-danse/preview.mp4",
       "duration": 15.0,
       "mode": "motion-transfer",
-      "resolution": "720p",
+      "resolution": "480p",
       "prompt": "Replace the man on the left (standing) with the first uploaded picture and the man on the right (at the laptop) with the second uploaded picture. Keep the white studio, keyboard, laptop, suits, dance moves, camera and timing.",
       "slots": [
         {
@@ -210,8 +210,8 @@
             "Add one photo for the person on the left (standing at the keyboard) and one for the person on the right (at the laptop). Use clear, front-facing, well-lit photos with one face each."
           ],
           [
-            "Keep 720p",
-            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+            "Keep 480p",
+            "480p is the default: it's the cheapest and looks fine on TikTok, Reels and Shorts. Pick 720p or 1080p for a sharper video."
           ],
           [
             "Click Generate",
@@ -229,7 +229,7 @@
           ],
           [
             "How much does the Alors on Danse AI video cost?",
-            "The full 15-second clip at 720p costs 611 credits (about $6.11). 480p is cheaper and 1080p is sharper. No subscription."
+            "The full 15-second clip at 480p costs 339 credits (about $3.39). 720p and 1080p are sharper and cost more. No subscription."
           ],
           [
             "Who goes where?",
@@ -256,7 +256,7 @@
       "preview_url": "trends/apt/preview.mp4",
       "duration": 19.95,
       "mode": "motion-transfer",
-      "resolution": "720p",
+      "resolution": "480p",
       "prompt": "Replace the blonde woman (ROSÉ) with the first uploaded picture and the man in the cap and sunglasses (Bruno Mars) with the second uploaded picture. Keep the pink studio, drums, leather jackets, choreography, camera cuts and timing.",
       "slots": [
         {
@@ -289,8 +289,8 @@
             "Add one photo for ROSÉ's part and one for Bruno Mars' part. Use clear, front-facing, well-lit photos with one face each."
           ],
           [
-            "Keep 720p",
-            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+            "Keep 480p",
+            "480p is the default: it's the cheapest and looks fine on TikTok, Reels and Shorts. Pick 720p or 1080p for a sharper video."
           ],
           [
             "Click Generate",
@@ -308,7 +308,7 @@
           ],
           [
             "How much does the APT. AI video cost?",
-            "The 20-second clip at 720p costs 781 credits (about $7.81). 480p is cheaper and 1080p is sharper. No subscription."
+            "The 20-second clip at 480p costs 418 credits (about $4.18). 720p and 1080p are sharper and cost more. No subscription."
           ],
           [
             "Who goes where?",

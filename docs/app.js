@@ -15,7 +15,7 @@ const $ = (id) => document.getElementById(id);
 const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
 
 const state = {
-  mode: T?.mode || "motion-transfer", res: T?.resolution || "720p",
+  mode: T?.mode || "motion-transfer", res: T?.resolution || "480p",
   video: null, duration: 0,
   images: T ? T.slots.map(() => null) : [], // trend: fixed slots (File|null); custom: File[]
   user: null, credits: 0, jobs: [], pendingGenerate: false, pack: C.PACKS[1].id,
