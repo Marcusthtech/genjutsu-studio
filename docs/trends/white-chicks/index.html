@@ -46,6 +46,7 @@
       <h1>White Chicks AI Video Generator</h1>
       <p class="lead">Put your faces in the viral <b>"A Thousand Miles"</b> car scene with Terry Crews. The scene is locked in: add a photo of each person and click Generate.</p>
       <p class="price-chip">Full scene: 1,957 credits (≈ $19.57) at 720p · no subscription</p>
+      <p><a class="see-example" href="#example">▶ See an example result</a></p>
     </section>
 
     <section class="card studio" id="studio">
@@ -81,6 +82,19 @@
 
       <button id="generate-btn" class="btn primary big" disabled>Generate video</button>
       <p class="fine">Failed or moderated generations are refunded automatically. Results stay available for 7 days, so download them.</p>
+    </section>
+
+    <section class="result-sample" id="example">
+      <h2>Example result</h2>
+      <p class="muted">These two photos went in, and this video came out. Same scene, same price as yours.</p>
+      <div class="rs-row">
+        <div class="rs-inputs"><figure><img src="../../assets/examples/white-chicks-b.jpg" alt="Example photo: Person on the left" loading="lazy" /><figcaption>Person on the left</figcaption></figure><figure><img src="../../assets/examples/white-chicks-a.jpg" alt="Example photo: Person on the right" loading="lazy" /><figcaption>Person on the right</figcaption></figure></div>
+        <div class="rs-arrow" aria-hidden="true">→</div>
+        <figure class="rs-video">
+          <video src="../../trends/white-chicks/result-sample.mp4" poster="../../trends/white-chicks/result-poster.jpg" controls muted loop playsinline preload="metadata"></video>
+          <figcaption>Result · 720p · tap 🔊 for sound</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="history" hidden>
@@ -148,7 +162,7 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script>window.PAGE = {"kind": "trend", "trend": {"slug": "white-chicks", "short": "White Chicks car scene", "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/white-chicks-car.mp4", "mode": "motion-transfer", "resolution": "720p", "prompt": "Replace both characters with the uploaded pictures", "poster": "../../trends/white-chicks/poster.jpg", "preview_url": "../../trends/white-chicks/preview.mp4", "slots": [{"label": "Person on the left", "hint": "Passenger seat", "example": "../../assets/examples/example-a.jpg"}, {"label": "Person on the right", "hint": "Driver (Terry Crews)", "example": "../../assets/examples/example-b.jpg"}]}}; window.TREND_NAMES = {"white-chicks": "White Chicks car scene"};</script>
+  <script>window.PAGE = {"kind": "trend", "trend": {"slug": "white-chicks", "short": "White Chicks car scene", "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/white-chicks-car.mp4", "mode": "motion-transfer", "resolution": "720p", "prompt": "Replace both characters with the uploaded pictures", "poster": "../../trends/white-chicks/poster.jpg", "preview_url": "../../trends/white-chicks/preview.mp4", "slots": [{"label": "Person on the left", "hint": "Passenger seat", "example": "../../assets/examples/white-chicks-b.jpg"}, {"label": "Person on the right", "hint": "Driver (Terry Crews)", "example": "../../assets/examples/white-chicks-a.jpg"}]}}; window.TREND_NAMES = {"white-chicks": "White Chicks car scene"};</script>
   <script src="../../config.js?v=20261011"></script>
   <script type="module" src="../../app.js?v=20261011"></script>
 </body>

@@ -255,6 +255,29 @@ STUDIO_CUSTOM = """    <section class="card studio" id="studio">
 """
 
 
+def result_sample(t, root):
+    rs = t.get("result_sample")
+    if not rs:
+        return ""
+    inputs = "".join(
+        f'<figure><img src="{rel(root, s["example"])}" alt="Example photo: {esc(s["label"])}" loading="lazy" /><figcaption>{esc(s["label"])}</figcaption></figure>'
+        for s in t["slots"] if s.get("example")
+    )
+    return f"""    <section class="result-sample" id="example">
+      <h2>Example result</h2>
+      <p class="muted">These two photos went in, and this video came out. Same scene, same price as yours.</p>
+      <div class="rs-row">
+        <div class="rs-inputs">{inputs}</div>
+        <div class="rs-arrow" aria-hidden="true">→</div>
+        <figure class="rs-video">
+          <video src="{rel(root, rs['video'])}" poster="{rel(root, rs['poster'])}" controls muted loop playsinline preload="metadata"></video>
+          <figcaption>Result · 720p · tap 🔊 for sound</figcaption>
+        </figure>
+      </div>
+    </section>
+"""
+
+
 def write(rel, content):
     p = DOCS / rel
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -301,9 +324,11 @@ for t in TRENDS:
       <h1>{esc(s['h1'])}</h1>
       <p class="lead">{s['lead']}</p>
       <p class="price-chip">Full scene: {price_text(t)} · no subscription</p>
+      {'<p><a class="see-example" href="#example">▶ See an example result</a></p>' if t.get("result_sample") else ''}
     </section>
 
 {studio_trend(t)}
+{result_sample(t, root)}
 {HISTORY}
     <section class="seo">
       <h2>About the trend</h2>

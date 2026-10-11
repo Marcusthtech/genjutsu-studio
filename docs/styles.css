@@ -186,7 +186,21 @@ main > .crumbs { padding-top: 6px; }
 .photo-tips li.ok::before { content: "✓ "; color: var(--ok); font-weight: 700; }
 .photo-tips li.no::before { content: "✕ "; color: var(--bad); font-weight: 700; }
 
+.see-example { display: inline-block; margin-top: 10px; font-weight: 600; text-decoration: none; }
+.result-sample { margin-top: 32px; }
+.result-sample h2 { margin-bottom: 4px; }
+.rs-row { display: grid; grid-template-columns: auto auto 1fr; gap: 14px; align-items: center; margin-top: 14px; }
+.rs-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 220px; }
+.rs-inputs figure, .rs-video { margin: 0; }
+.rs-inputs img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); display: block; }
+figcaption { color: var(--muted); font-size: 12px; margin-top: 5px; text-align: center; }
+.rs-arrow { font-size: 28px; color: var(--accent); }
+.rs-video video { width: 100%; border-radius: 14px; background: #000; display: block; border: 1px solid var(--line); }
+
 @media (max-width: 640px) {
+  .rs-row { grid-template-columns: 1fr; }
+  .rs-inputs { width: 100%; max-width: 280px; margin: 0 auto; }
+  .rs-arrow { transform: rotate(90deg); text-align: center; }
   .nav { margin-left: 8px; } .nav a { padding: 6px 8px; font-size: 14px; }
   .top-actions .btn.ghost { padding: 8px 10px; }
   .seo-grid { grid-template-columns: 1fr; }

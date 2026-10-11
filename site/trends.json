@@ -16,12 +16,12 @@
         {
           "label": "Person on the left",
           "hint": "Passenger seat",
-          "example": "assets/examples/example-a.jpg"
+          "example": "assets/examples/white-chicks-b.jpg"
         },
         {
           "label": "Person on the right",
           "hint": "Driver (Terry Crews)",
-          "example": "assets/examples/example-b.jpg"
+          "example": "assets/examples/white-chicks-a.jpg"
         }
       ],
       "published": "2026-09-30",
@@ -82,7 +82,11 @@
           ]
         ]
       },
-      "preview_url": "trends/white-chicks/preview.mp4"
+      "preview_url": "trends/white-chicks/preview.mp4",
+      "result_sample": {
+        "video": "trends/white-chicks/result-sample.mp4",
+        "poster": "trends/white-chicks/result-poster.jpg"
+      }
     }
   ]
 }
