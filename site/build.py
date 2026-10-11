@@ -187,6 +187,11 @@ RES_ROW = """      <div class="row">
 """
 
 
+def photos_text(t):
+    n, m = len(t["slots"]), t.get("min_photos", len(t["slots"]))
+    return f"{m}–{n} photos" if m < n else f"{n} photo{'s' if n > 1 else ''}"
+
+
 def studio_trend(t, root):
     n = len(t["slots"])
     rs = t.get("result_sample")
@@ -203,7 +208,7 @@ def studio_trend(t, root):
     return f"""    <section class="card studio" id="studio">
       <div class="preset-bar">
         <span class="trend">🔥 Trending</span>
-        <span>The scene is ready. Add {n} photo{'s' if n > 1 else ''}, then hit Generate.</span>
+        <span>The scene is ready. Add {photos_text(t)}, then hit Generate.</span>
       </div>
       <div class="grid2 eq">
         <div class="drop locked" id="video-drop">
@@ -292,6 +297,7 @@ for t in TRENDS:
         "poster": rel(root, t["poster"]),
         "preview_url": rel(root, t.get("preview_url", t["video_url"])),
         "slots": [{**s, "example": rel(root, s["example"]) if s.get("example") else None} for s in t["slots"]],
+        "min_photos": t.get("min_photos", len(t["slots"])),
     }}
     howto = {
         "@context": "https://schema.org", "@type": "HowTo", "name": f"How to make the {t['name']} AI video",
@@ -349,7 +355,7 @@ for t in TRENDS:
 cards = "\n".join(f"""        <a class="trend-card" href="trends/{t['slug']}/">
           <div class="tc-media"><img src="{rel('', t['poster'])}" alt="{esc(t['name'])} AI video trend" loading="lazy" /><video data-src="{rel('', t.get('preview_url', t['video_url']))}" loop playsinline preload="none"></video><span class="tc-badge">🔥 Trending</span><span class="tc-sound" hidden>🔇</span></div>
           <div class="tc-body"><b>{esc(t['name'])}</b><span>{esc(t['card_blurb'])}</span>
-            <span class="tc-meta">{len(t['slots'])} photos · {-(-t['duration'] // 1):.0f}s · {price_text(t)}</span></div>
+            <span class="tc-meta">{photos_text(t)} · {-(-t['duration'] // 1):.0f}s · {price_text(t)}</span></div>
         </a>""" for t in TRENDS)
 home_faq = [
     ("What is Genjutsu Studio?", "A site that lets you make viral AI video trends with Higgsfield's Genjutsu model. Pick a trend, add your photos and generate. No subscription."),

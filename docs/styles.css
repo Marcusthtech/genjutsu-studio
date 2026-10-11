@@ -218,3 +218,10 @@ main > .crumbs { padding-top: 6px; }
 .price-points span { color: var(--muted); font-size: 14px; }
 @media (max-width: 640px) { .price-points { grid-template-columns: 1fr; } }
 .article .lead { margin-left: 0; margin-right: 0; padding: 0; text-align: left; }
+.thumbs.slots.many { grid-template-columns: repeat(4, 1fr); }
+.slots.many .thumb { min-height: 120px; }
+.slots.many .slot-hint { display: none; }
+@media (max-width: 640px) { .thumbs.slots.many { grid-template-columns: repeat(2, 1fr); } }
+.slots.many .slot-label { font-size: 12px; white-space: nowrap; }
+.slots.many .slot-add { font-size: 11px; padding: 3px 8px; white-space: nowrap; }
+.slots.many .slot-plus { font-size: 18px; }

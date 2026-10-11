@@ -324,6 +324,110 @@
           ]
         ]
       }
+    },
+    {
+      "slug": "industry-baby",
+      "name": "Industry Baby: Prison Dance Squad",
+      "short": "Industry Baby squad",
+      "card_blurb": "The \"Industry Baby\" prison shower dance and phone scene. Cast the lead and up to 7 dancers.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/industry-baby.mp4",
+      "poster": "trends/industry-baby/poster.jpg",
+      "preview_url": "trends/industry-baby/preview.mp4",
+      "duration": 24.97,
+      "mode": "motion-transfer",
+      "resolution": "480p",
+      "min_photos": 1,
+      "prompt": "Replace the lead (the man in the light-blue jersey who dances in front and sings on the prison phone) with the first uploaded picture. Replace the other dancers, from left to right, with the remaining uploaded pictures in order; anyone without a picture stays as they are. Keep the pink and teal shower room, the prison visiting room, the jerseys, the choreography, camera cuts and timing.",
+      "slots": [
+        {
+          "label": "The lead",
+          "hint": "Light-blue jersey, sings on the phone",
+          "example": "assets/examples/white-chicks-a.jpg"
+        },
+        {
+          "label": "Dancer 2",
+          "hint": "Optional",
+          "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "Dancer 3",
+          "hint": "Optional"
+        },
+        {
+          "label": "Dancer 4",
+          "hint": "Optional"
+        },
+        {
+          "label": "Dancer 5",
+          "hint": "Optional"
+        },
+        {
+          "label": "Dancer 6",
+          "hint": "Optional"
+        },
+        {
+          "label": "Dancer 7",
+          "hint": "Optional"
+        },
+        {
+          "label": "Dancer 8",
+          "hint": "Optional"
+        }
+      ],
+      "published": "2026-10-12",
+      "seo": {
+        "title": "Industry Baby AI Video Generator: Prison Dance Face Swap for Up to 8 Friends",
+        "description": "Put your whole squad in the viral \"Industry Baby\" prison dance. The clip is preloaded: add 1 to 8 photos and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "Industry Baby AI Video Generator",
+        "lead": "The <b>\"Industry Baby\"</b> shower-room dance and prison-phone scene, with your squad. Add the lead, then up to 7 dancers, and click Generate.",
+        "og_title": "Industry Baby AI Video: Put Your Squad in the Prison Dance",
+        "og_tagline": "Industry Baby AI face swap · up to 8 people · No subscription",
+        "about_html": "<p>Lil Nas X and Jack Harlow's \"Industry Baby\" (2021) came with a prison-themed video whose pink-and-teal shower dance became instantly recognizable. The AI trend recasts it: one lead who dances up front and sings into the prison phone, and a whole line of dancers behind.</p><p>This template takes up to 8 photos, so you can put a full team, a friend group or an office in it. <a href=\"../../genjutsu/\">Genjutsu</a> keeps the original choreography, camera cuts and timing and rebuilds each person from the photos.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The Industry Baby clip and the prompt are already loaded. You don't need to find the video or a CapCut template."
+          ],
+          [
+            "Add the lead",
+            "The first photo is the lead: the one dancing up front and singing on the prison phone. Use a clear, front-facing photo."
+          ],
+          [
+            "Add up to 7 dancers",
+            "Optional. Each extra photo replaces one dancer, from left to right. Dancers without a photo stay as they are."
+          ],
+          [
+            "Click Generate",
+            "480p is the default. You'll see the exact price first, and the video renders in a few minutes."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with \"Industry Baby\" as the sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How many people can be in the Industry Baby AI video?",
+            "Up to 8: one lead and up to 7 dancers. Only the lead photo is required."
+          ],
+          [
+            "How much does the Industry Baby AI video cost?",
+            "The 25-second clip at 480p costs 498 credits (about $4.98), whether you add 1 photo or 8. 720p and 1080p are sharper and cost more. No subscription."
+          ],
+          [
+            "Who goes where?",
+            "Photo 1 is the lead (front, on the prison phone). Photos 2 to 8 replace the dancers from left to right."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
     }
   ]
 }

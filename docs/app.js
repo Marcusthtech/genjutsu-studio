@@ -165,6 +165,7 @@ function pickImage(slot) { pickSlot = slot; $("image-input").multiple = slot ===
 function renderThumbs() {
   const box = $("thumbs"); box.innerHTML = "";
   box.classList.toggle("slots", !!T);
+  box.classList.toggle("many", !!T && T.slots.length > 4);
   const show = !!T || state.images.length > 0;
   box.hidden = !show; $("image-empty").hidden = show;
   state.images.forEach((f, i) => {
@@ -229,7 +230,7 @@ function refresh() {
     bd.innerHTML = `<div class="bd-math"><span>${clampSecs(state.duration)} sec video</span><span>×</span><span>${rate} credits/sec at ${state.res}</span>${C.FEE_CREDITS ? `<span>+</span><span>${C.FEE_CREDITS} per video</span>` : ""}<span>=</span><b>${cost.toLocaleString()} credits</b></div>
       <div class="bd-note">Output length matches the source video (max 30 s). ${bal} Credits are held when you start and refunded automatically if it fails.</div>`;
   }
-  const need = T ? state.images.length : 1;
+  const need = T ? (T.min_photos ?? state.images.length) : 1;
   const have = photos().length;
   const ready = state.video && have >= need;
   const btn = $("generate-btn");
