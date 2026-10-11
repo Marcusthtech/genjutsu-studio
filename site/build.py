@@ -492,7 +492,7 @@ pr += f"""  <main>
       <p>480p is the default and looks fine on TikTok, Reels and Shorts. The <a href="../custom/">Custom</a> page uses the same rates for your own 4–30 second clip.</p>
 
       <h2>How the price is calculated</h2>
-      <p><b>Seconds of video × rate + $1 per video.</b> The rate is what Higgsfield charges us to run Genjutsu, passed through as-is. Our fee is the flat $1.</p>
+      <p><b>Seconds of video × rate + $1 per video.</b></p>
       <table>
         <tr><th>Resolution</th><th>Per second</th><th>10-second video</th></tr>
 """ + "".join(f"        <tr><td>{r}</td><td>${v / 100:.3f}</td><td>${video_price(10, r):.2f}</td></tr>\n" for r, v in RATES.items()) + f"""      </table>
