@@ -245,6 +245,85 @@
           ]
         ]
       }
+    },
+    {
+      "slug": "apt",
+      "name": "APT.: ROSÉ & Bruno Mars",
+      "short": "APT. music video",
+      "card_blurb": "ROSÉ and Bruno Mars in the pink \"APT.\" studio. Put two faces in.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/apt.mp4",
+      "poster": "trends/apt/poster.jpg",
+      "preview_url": "trends/apt/preview.mp4",
+      "duration": 19.95,
+      "mode": "motion-transfer",
+      "resolution": "720p",
+      "prompt": "Replace the blonde woman (ROSÉ) with the first uploaded picture and the man in the cap and sunglasses (Bruno Mars) with the second uploaded picture. Keep the pink studio, drums, leather jackets, choreography, camera cuts and timing.",
+      "slots": [
+        {
+          "label": "ROSÉ's part",
+          "hint": "Blonde singer at the mic",
+          "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "Bruno Mars' part",
+          "hint": "Drummer in the cap",
+          "example": "assets/examples/white-chicks-a.jpg"
+        }
+      ],
+      "published": "2026-10-11",
+      "seo": {
+        "title": "APT. AI Video Generator: ROSÉ & Bruno Mars Face Swap (No Subscription)",
+        "description": "Put two faces in the ROSÉ & Bruno Mars \"APT.\" music video. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "APT. AI Video Generator",
+        "lead": "Put two faces in ROSÉ & Bruno Mars' <b>\"APT.\"</b> music video. The 20-second clip is locked in: add a photo for each part and click Generate.",
+        "og_title": "APT. AI Video: Put Your Faces in the ROSÉ & Bruno Mars Video",
+        "og_tagline": "APT. AI face swap · Genjutsu · No subscription",
+        "about_html": "<p>\"APT.\" by ROSÉ and Bruno Mars came out in October 2024 and became one of the biggest songs in the world, with a pink-studio music video full of drum fills, leather jackets and the \"apateu, apateu\" chant. The AI trend recasts the video: you and a friend take ROSÉ's and Bruno's parts.</p><p>Most face swap apps paste a flat face over the clip. <a href=\"../../genjutsu/\">Genjutsu</a> keeps the original motion, camera cuts and timing and rebuilds both performers from your photos, so every move lands on the beat.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The APT. clip and the prompt are already loaded. You don't need to find the video or a CapCut template."
+          ],
+          [
+            "Add two photos",
+            "Add one photo for ROSÉ's part and one for Bruno Mars' part. Use clear, front-facing, well-lit photos with one face each."
+          ],
+          [
+            "Keep 720p",
+            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+          ],
+          [
+            "Click Generate",
+            "You'll see the exact price first. The video renders in a few minutes, and you can close the tab and come back."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with \"APT.\" as the sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How do I make the APT. AI video?",
+            "Open this page. The ROSÉ & Bruno Mars clip is already loaded. Add one photo for ROSÉ's part and one for Bruno Mars' part, then click Generate."
+          ],
+          [
+            "How much does the APT. AI video cost?",
+            "The 20-second clip at 720p costs 781 credits (about $7.81). 480p is cheaper and 1080p is sharper. No subscription."
+          ],
+          [
+            "Who goes where?",
+            "The first photo replaces ROSÉ (blonde, at the mic) and the second replaces Bruno Mars (cap and sunglasses, on drums)."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
     }
   ]
 }
