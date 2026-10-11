@@ -466,13 +466,10 @@ def video_price(secs, res):
     return (int(-(-secs * RATES[res] // 1)) + FEE_CREDITS) / 100
 
 
-trend_rows = "\n".join(
-    f'        <tr><td><a href="../trends/{t["slug"]}/">{esc(t["short"])}</a></td><td>{-(-t["duration"] // 1):.0f}s</td>'
-    + "".join(f"<td>${video_price(t['duration'], r):.2f}</td>" for r in RATES) + "</tr>" for t in TRENDS)
 pfaq = [
     ("Is there a subscription?", "No. There is no monthly plan and nothing renews. You pay once for the video you are making."),
     ("Do I have to buy credits I won't use?", "No. At checkout, pick \"Just this video\" and you pay exactly that video's price. Packs are optional, for people who plan to make several videos."),
-    ("How is the price calculated?", "Seconds of the source video × the per-second rate for the resolution you pick, plus a flat $1 per video. The exact price shows before you click Generate."),
+    ("How is the price calculated?", "By the length of the video and the resolution you pick. The exact price shows before you click Generate."),
     ("What if the video fails?", "Failed or moderated generations are refunded automatically to your balance."),
     ("Why do some apps look cheaper?", "Subscription apps advertise \"up to\" numbers based on their cheapest model and shortest clip, and you pay every month whether you use it or not. Here you pay only when you make a video, with Higgsfield Genjutsu, the model that keeps the original scene."),
 ]
@@ -491,19 +488,12 @@ pr += f"""  <main>
         <div><b>↩️ Failed = refunded</b><span>If it fails or is moderated, you get it back.</span></div>
       </div>
 
-      <h2>What a trend video costs</h2>
-      <table>
-        <tr><th>Trend</th><th>Length</th><th>480p</th><th>720p</th><th>1080p</th></tr>
-{trend_rows}
-      </table>
-      <p>480p is the default and looks fine on TikTok, Reels and Shorts. The <a href="../custom/">Custom</a> page uses the same rates for your own 4–30 second clip.</p>
-
       <h2>How the price is calculated</h2>
-      <p><b>Seconds of video × rate + $1 per video.</b></p>
+      <p>The price depends on how long the video is and the resolution you pick. Here are some examples:</p>
       <table>
-        <tr><th>Resolution</th><th>Per second</th><th>10-second video</th></tr>
-""" + "".join(f"        <tr><td>{r}</td><td>${v / 100:.3f}</td><td>${video_price(10, r):.2f}</td></tr>\n" for r, v in RATES.items()) + f"""      </table>
-      <p>Videos are billed per started second, so an 18.4 s clip counts as 19 s. The exact price is shown before you click Generate.</p>
+        <tr><th>Resolution</th><th>10-second video</th><th>20-second video</th><th>30-second video</th></tr>
+""" + "".join(f"        <tr><td>{r}</td>" + "".join(f"<td>${video_price(x, r):.2f}</td>" for x in (10, 20, 30)) + "</tr>\n" for r in RATES) + f"""      </table>
+      <p>480p is the default and looks fine on TikTok, Reels and Shorts. The exact price for every trend and for your own clip on the <a href="../custom/">Custom</a> page is shown before you click Generate.</p>
 
       <h2>Why not a subscription?</h2>
       <p>Most AI video apps sell a monthly plan with a pile of credits. You pay every month, the \"up to 60 videos\" assumes their cheapest model and shortest clip, and unused credits disappear. You usually want one video for one trend, so that's what you pay for here.</p>
