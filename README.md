@@ -49,4 +49,4 @@ Visitors sign in with email, buy credits via PayPal, and generate videos. No sub
 6. Test with PayPal sandbox buyer account → switch `PAYPAL_ENV=live` + live client id/secret.
 
 ## Pricing reference (Higgsfield, Sept 2026)
-480p $0.159/s · 720p $0.681/s · 1080p $1.632/s. Source video 4–30 s, 1–8 reference images.
+480p $0.318/s · 720p $0.681/s · 1080p $1.632/s. Source video 4–30 s, 1–8 reference images.

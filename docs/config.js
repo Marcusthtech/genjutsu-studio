@@ -12,5 +12,5 @@ window.GENJUTSU_CONFIG = {
     { id: "studio", usd: 40, credits: 4500, label: "Studio", tag: "Best value" },
   ],
   // Display-only cost preview: credits per second of output (server uses Higgsfield's estimate).
-  CREDITS_PER_SEC: { "480p": 24, "720p": 103, "1080p": 245 },
+  CREDITS_PER_SEC: { "480p": 48, "720p": 103, "1080p": 245 },
 };

@@ -47,7 +47,7 @@ export const HF_BASE = "https://api.higgsfield.ai";
 export const WORKFLOWS = ["motion-transfer", "object-swap"] as const;
 export const RESOLUTIONS = ["480p", "720p", "1080p"] as const;
 // USD per second of output, used only when the estimate endpoint is unavailable.
-export const FALLBACK_USD_PER_SEC: Record<string, number> = { "480p": 0.159, "720p": 0.681, "1080p": 1.632 };
+export const FALLBACK_USD_PER_SEC: Record<string, number> = { "480p": 0.318, "720p": 0.681, "1080p": 1.632 };
 export const TERMINAL = new Set(["completed", "failed", "nsfw", "canceled"]);
 
 export function hfHeaders(extra: Record<string, string> = {}) {
