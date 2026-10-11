@@ -112,7 +112,7 @@ def header(root, app=True, active=""):
     cls = lambda k: ' class="active"' if k == active else ""
     return f"""  <header class="top">
     <a class="brand" href="{root}"><span class="logo">🌀</span> Genjutsu<span class="dim">Studio</span></a>
-    <nav class="nav"><a href="{root}"{cls('trends')}>Trends</a><a href="{root}custom/"{cls('custom')}>Custom</a></nav>
+    <nav class="nav"><a href="{root}"{cls('trends')}>Trends</a><a href="{root}custom/"{cls('custom')}>Custom</a><a href="{root}pricing/"{cls('pricing')}>Pricing</a></nav>
     <div class="top-actions">
 {actions}
     </div>
@@ -123,7 +123,7 @@ def header(root, app=True, active=""):
 def footer(root, app=True, page=None):
     trend_links = " · ".join(f'<a href="{root}trends/{t["slug"]}/">{esc(t["short"])}</a>' for t in TRENDS)
     out = f"""  <footer>
-    <nav class="foot-links"><a href="{root}">All trends</a> · {trend_links} · <a href="{root}custom/">Custom trend</a> · <a href="{root}genjutsu/">Genjutsu without subscription</a></nav>
+    <nav class="foot-links"><a href="{root}">All trends</a> · {trend_links} · <a href="{root}custom/">Custom trend</a> · <a href="{root}pricing/">Pricing</a> · <a href="{root}genjutsu/">Genjutsu without subscription</a></nav>
     Independent service. Powered by the Higgsfield API. Not affiliated with Higgsfield AI or with the owners of the films and clips referenced.
   </footer>
 """
@@ -450,6 +450,68 @@ g += f"""  <main>
 g += footer("../", app=False)
 write("genjutsu/index.html", g)
 
+# ---------------- pricing ----------------
+RATES = {"480p": 15.9, "720p": 34.05, "1080p": 81.6}  # credits/sec, keep in sync with docs/config.js
+
+
+def video_price(secs, res):
+    secs = min(30, max(4, -(-secs // 1)))
+    return (int(-(-secs * RATES[res] // 1)) + FEE_CREDITS) / 100
+
+
+trend_rows = "\n".join(
+    f'        <tr><td><a href="../trends/{t["slug"]}/">{esc(t["short"])}</a></td><td>{-(-t["duration"] // 1):.0f}s</td>'
+    + "".join(f"<td>${video_price(t['duration'], r):.2f}</td>" for r in RATES) + "</tr>" for t in TRENDS)
+pfaq = [
+    ("Is there a subscription?", "No. There is no monthly plan and nothing renews. You pay once for the video you are making."),
+    ("Do I have to buy credits I won't use?", "No. At checkout, pick \"Just this video\" and you pay exactly that video's price. Packs are optional, for people who plan to make several videos."),
+    ("How is the price calculated?", "Seconds of the source video × the per-second rate for the resolution you pick, plus a flat $1 per video. The exact price shows before you click Generate."),
+    ("What if the video fails?", "Failed or moderated generations are refunded automatically to your balance."),
+    ("Why do some apps look cheaper?", "Subscription apps advertise \"up to\" numbers based on their cheapest model and shortest clip, and you pay every month whether you use it or not. Here you pay only when you make a video, with Higgsfield Genjutsu, the model that keeps the original scene."),
+]
+pr = head(path="pricing/", title="Pricing: Pay Per Video, No Subscription | Genjutsu Studio",
+          description="Genjutsu Studio pricing: pay once for the video you make. No subscription, no unused credits. Trend videos from about $3.39 at 480p.",
+          image=f"{BASE}og.jpg", extra_ld=ld(faq_ld(pfaq), breadcrumbs(("Trends", ""), ("Pricing", "pricing/"))))
+pr += header("../", app=False, active="pricing")
+pr += f"""  <main>
+    <article class="article">
+      <div class="crumbs"><a href="../">Trends</a> › Pricing</div>
+      <h1>Pay per video. That's it.</h1>
+      <p class="lead">No subscription, no monthly credits that expire, no leftovers. You pay for the video you're making, right when you make it.</p>
+      <div class="price-points">
+        <div><b>🚫 No subscription</b><span>Nothing renews. No plan to cancel.</span></div>
+        <div><b>🎯 Pay for just this video</b><span>Checkout charges exactly this video's price.</span></div>
+        <div><b>↩️ Failed = refunded</b><span>If it fails or is moderated, you get it back.</span></div>
+      </div>
+
+      <h2>What a trend video costs</h2>
+      <table>
+        <tr><th>Trend</th><th>Length</th><th>480p</th><th>720p</th><th>1080p</th></tr>
+{trend_rows}
+      </table>
+      <p>480p is the default and looks fine on TikTok, Reels and Shorts. The <a href="../custom/">Custom</a> page uses the same rates for your own 4–30 second clip.</p>
+
+      <h2>How the price is calculated</h2>
+      <p><b>Seconds of video × rate + $1 per video.</b> The rate is what Higgsfield charges us to run Genjutsu, passed through as-is. Our fee is the flat $1.</p>
+      <table>
+        <tr><th>Resolution</th><th>Per second</th><th>10-second video</th></tr>
+""" + "".join(f"        <tr><td>{r}</td><td>${v / 100:.3f}</td><td>${video_price(10, r):.2f}</td></tr>\n" for r, v in RATES.items()) + f"""      </table>
+      <p>Videos are billed per started second, so an 18.4 s clip counts as 19 s. The exact price is shown before you click Generate.</p>
+
+      <h2>Why not a subscription?</h2>
+      <p>Most AI video apps sell a monthly plan with a pile of credits. You pay every month, the \"up to 60 videos\" assumes their cheapest model and shortest clip, and unused credits disappear. You usually want one video for one trend, so that's what you pay for here.</p>
+
+      <h2>Optional packs</h2>
+      <p>Making a few videos? Packs add a small bonus: $5 = 500 credits, $15 = 1,600 credits (+7%), $40 = 4,500 credits (+12%). 100 credits = $1. You never need one: \"Just this video\" is always an option at checkout.</p>
+
+      <h2>Questions</h2>
+{faq_html(pfaq)}
+    </article>
+  </main>
+"""
+pr += footer("../", app=False)
+write("pricing/index.html", pr)
+
 # ---------------- old URL → new trend page ----------------
 target = f"{BASE}trends/white-chicks/"
 write("white-chicks-ai-trend/index.html", f"""<!doctype html>
@@ -460,7 +522,7 @@ write("white-chicks-ai-trend/index.html", f"""<!doctype html>
 """)
 
 # ---------------- sitemap / robots ----------------
-urls = [("", "1.0"), ("custom/", "0.7"), ("genjutsu/", "0.7")] + [(f"trends/{t['slug']}/", "0.9") for t in TRENDS]
+urls = [("", "1.0"), ("custom/", "0.7"), ("pricing/", "0.8"), ("genjutsu/", "0.7")] + [(f"trends/{t['slug']}/", "0.9") for t in TRENDS]
 write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
       + "".join(f"  <url><loc>{BASE}{u}</loc><lastmod>{TODAY}</lastmod><priority>{p}</priority></url>\n" for u, p in urls)
       + "</urlset>\n")

@@ -344,9 +344,17 @@ function renderJobs() {
 
 // ---------------- buy credits ----------------
 on("credits-pill", "click", () => openBuy());
-function openBuy(reason) {
+// "Just this video" pays exactly the missing credits, so nothing is left over. Packs are optional.
+const MIN_EXACT = 50;
+function packList() {
   const short = estimate() - state.credits;
-  if (short > 0) state.pack = (C.PACKS.find((p) => p.credits >= short) || C.PACKS[C.PACKS.length - 1]).id;
+  if (short <= 0) return C.PACKS;
+  const credits = Math.max(short, MIN_EXACT);
+  return [{ id: "exact", label: "Just this video", tag: "No leftovers", credits, usd: (credits / 100).toFixed(2) }, ...C.PACKS];
+}
+function openBuy(reason) {
+  if (estimate() - state.credits > 0) state.pack = "exact";
+  else if (state.pack === "exact") state.pack = C.PACKS[0].id;
   $("buy-reason").textContent = reason || "One-time payment. No subscription.";
   $("buy-err").textContent = "";
   renderPacks(); $("buy-modal").showModal(); renderPayPal();
@@ -354,7 +362,7 @@ function openBuy(reason) {
 on("buy-modal", "close", () => { state.pendingGenerate = false; });
 function renderPacks() {
   const box = $("packs"); box.innerHTML = "";
-  for (const p of C.PACKS) {
+  for (const p of packList()) {
     const b = document.createElement("button");
     b.className = "pack" + (p.id === state.pack ? " active" : "");
     b.innerHTML = `<span><span class="p-name">${p.label}</span>${p.tag ? `<span class="tag">${p.tag}</span>` : ""}
@@ -382,7 +390,7 @@ function loadPayPal() {
 }
 async function renderPayPal() {
   const box = $("paypal-buttons"); box.innerHTML = "";
-  const pack = C.PACKS.find((p) => p.id === state.pack);
+  const pack = packList().find((p) => p.id === state.pack) || C.PACKS[0];
   if (DEMO || !C.PAYPAL_CLIENT_ID) {
     const b = document.createElement("button"); b.className = "btn primary wide";
     b.textContent = `Pay $${pack.usd} (demo)`;
@@ -393,7 +401,7 @@ async function renderPayPal() {
     await loadPayPal();
     await window.paypal.Buttons({
       style: { layout: "vertical", shape: "rect", label: "pay" },
-      createOrder: async () => (await callFn("paypal", { action: "create", pack_id: pack.id })).order_id,
+      createOrder: async () => (await callFn("paypal", { action: "create", pack_id: pack.id, credits: pack.credits })).order_id,
       onApprove: async ({ orderID }) => {
         const r = await callFn("paypal", { action: "capture", order_id: orderID });
         onPaid(r.credits_added);
