@@ -347,7 +347,7 @@ for t in TRENDS:
 
 # ---------------- home ----------------
 cards = "\n".join(f"""        <a class="trend-card" href="trends/{t['slug']}/">
-          <div class="tc-media"><img src="{rel('', t['poster'])}" alt="{esc(t['name'])} AI video trend" loading="lazy" /><span class="tc-badge">🔥 Trending</span></div>
+          <div class="tc-media"><img src="{rel('', t['poster'])}" alt="{esc(t['name'])} AI video trend" loading="lazy" /><video data-src="{rel('', t.get('preview_url', t['video_url']))}" loop playsinline preload="none"></video><span class="tc-badge">🔥 Trending</span><span class="tc-sound" hidden>🔇</span></div>
           <div class="tc-body"><b>{esc(t['name'])}</b><span>{esc(t['card_blurb'])}</span>
             <span class="tc-meta">{len(t['slots'])} photos · {-(-t['duration'] // 1):.0f}s · {price_text(t)}</span></div>
         </a>""" for t in TRENDS)

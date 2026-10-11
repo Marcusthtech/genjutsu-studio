@@ -412,3 +412,16 @@ if (T) {
 if (HAS_STUDIO) { selectMode(state.mode); selectRes(state.res); renderThumbs(); }
 refresh();
 initAuth();
+
+// Gallery: hover a trend card to play its scene with sound (browsers may force mute until the first click on the page).
+document.querySelectorAll(".trend-card .tc-media").forEach((m) => {
+  const v = m.querySelector("video"), badge = m.querySelector(".tc-sound");
+  if (!v) return;
+  const show = () => { v.classList.add("on"); badge.hidden = false; badge.textContent = v.muted ? "🔇" : "🔊"; };
+  m.addEventListener("mouseenter", () => {
+    if (!v.src) v.src = v.dataset.src;
+    v.muted = false;
+    v.play().then(show).catch(() => { v.muted = true; v.play().then(show).catch(() => {}); });
+  });
+  m.addEventListener("mouseleave", () => { v.pause(); v.currentTime = 0; v.classList.remove("on"); badge.hidden = true; });
+});
