@@ -96,7 +96,7 @@
       "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/hotel-lobby.mp4",
       "poster": "trends/hotel-lobby/poster.jpg",
       "preview_url": "trends/hotel-lobby/preview.mp4",
-      "duration": 7.5,
+      "duration": 15.1,
       "mode": "motion-transfer",
       "resolution": "720p",
       "prompt": "Replace the person on the left with the first uploaded picture and the person on the right with the second uploaded picture. Keep the orange background, microphone, outfits, motion, camera and timing.",
@@ -115,7 +115,7 @@
       "published": "2026-10-11",
       "seo": {
         "title": "Hotel Lobby AI Video Generator: Quavo & Takeoff Face Swap (No Subscription)",
-        "description": "Put two faces in the viral Quavo & Takeoff \"Hotel Lobby\" mic performance. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. About $3.73, no subscription.",
+        "description": "Put two faces in the viral Quavo & Takeoff \"Hotel Lobby\" mic performance. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. No subscription, pay per video.",
         "h1": "Hotel Lobby AI Video Generator",
         "lead": "Put two faces in Quavo & Takeoff's <b>\"Hotel Lobby\"</b> mic performance. The clip is locked in: add a photo of each person and click Generate.",
         "og_title": "Hotel Lobby AI Video: Put Your Faces in the Quavo & Takeoff Performance",
@@ -150,7 +150,7 @@
           ],
           [
             "How much does the Hotel Lobby AI video cost?",
-            "The 8-second clip at 720p costs 373 credits (about $3.73), which fits in the $5 starter pack. No subscription."
+            "The full 16-second clip at 720p costs 645 credits (about $6.45). 480p is cheaper and 1080p is sharper. No subscription."
           ],
           [
             "Who goes where?",
