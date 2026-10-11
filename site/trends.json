@@ -166,6 +166,85 @@
           ]
         ]
       }
+    },
+    {
+      "slug": "alors-on-danse",
+      "name": "Alors on Danse: Keyboard Dance",
+      "short": "Alors on Danse keyboard scene",
+      "card_blurb": "Two coworkers at a keyboard break into a dance to \"Alors on danse\". Put two faces in.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/alors-on-danse.mp4",
+      "poster": "trends/alors-on-danse/poster.jpg",
+      "preview_url": "trends/alors-on-danse/preview.mp4",
+      "duration": 15.0,
+      "mode": "motion-transfer",
+      "resolution": "720p",
+      "prompt": "Replace the man on the left (standing) with the first uploaded picture and the man on the right (at the laptop) with the second uploaded picture. Keep the white studio, keyboard, laptop, suits, dance moves, camera and timing.",
+      "slots": [
+        {
+          "label": "Person on the left",
+          "hint": "Standing at the keyboard",
+          "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "Person on the right",
+          "hint": "At the laptop",
+          "example": "assets/examples/white-chicks-a.jpg"
+        }
+      ],
+      "published": "2026-10-11",
+      "seo": {
+        "title": "Alors on Danse AI Video Generator: Keyboard Dance Face Swap (No Subscription)",
+        "description": "Put two faces in the viral \"Alors on danse\" keyboard dance. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "Alors on Danse AI Video Generator",
+        "lead": "Two guys in suits, a keyboard, and Stromae's <b>\"Alors on danse\"</b>. The clip is locked in: add a photo of each person and click Generate.",
+        "og_title": "Alors on Danse AI Video: Put Your Faces in the Keyboard Dance",
+        "og_tagline": "Alors on danse AI face swap · Genjutsu · No subscription",
+        "about_html": "<p>The \"Alors on danse\" trend takes Stromae's 2009 hit and drops it into an office moment: two men in suits at a keyboard and a laptop, playing it straight until the beat hits and they can't help dancing. The AI version swaps in you and a friend, a coworker or your boss.</p><p>Most face swap apps paste a flat face over the clip. <a href=\"../../genjutsu/\">Genjutsu</a> keeps the original motion, camera and timing and rebuilds both people from your photos, so every dance move matches the original.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The \"Alors on danse\" clip and the prompt are already loaded. You don't need to find the video or a CapCut template."
+          ],
+          [
+            "Add two photos",
+            "Add one photo for the person on the left (standing at the keyboard) and one for the person on the right (at the laptop). Use clear, front-facing, well-lit photos with one face each."
+          ],
+          [
+            "Keep 720p",
+            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+          ],
+          [
+            "Click Generate",
+            "You'll see the exact price first. The video renders in a few minutes, and you can close the tab and come back."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with \"Alors on danse\" as the sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How do I make the Alors on Danse AI video?",
+            "Open this page. The keyboard dance clip is already loaded. Add one clear photo for the person on the left and one for the person on the right, then click Generate."
+          ],
+          [
+            "How much does the Alors on Danse AI video cost?",
+            "The full 15-second clip at 720p costs 611 credits (about $6.11). 480p is cheaper and 1080p is sharper. No subscription."
+          ],
+          [
+            "Who goes where?",
+            "The left slot is the man standing at the keyboard and the right slot is the man at the laptop."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
     }
   ]
 }
