@@ -19,7 +19,8 @@ TRENDS = DATA["trends"]
 TODAY = date.today().isoformat()
 CREDITS_PER_SEC_DEFAULT = 15.9  # 480p; keep in sync with docs/config.js
 FEE_CREDITS = 100
-ASSET_VER = TODAY.replace("-", "")
+# Changes whenever app.js / styles.css / config.js change, so browsers never run a stale copy.
+ASSET_VER = __import__("hashlib").sha1(b"".join((DOCS / f).read_bytes() for f in ("app.js", "styles.css", "config.js"))).hexdigest()[:10]
 
 esc = html.escape
 
