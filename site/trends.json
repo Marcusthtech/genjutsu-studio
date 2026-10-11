@@ -87,6 +87,85 @@
         "video": "trends/white-chicks/result-sample.mp4",
         "poster": "trends/white-chicks/result-poster.jpg"
       }
+    },
+    {
+      "slug": "hotel-lobby",
+      "name": "Hotel Lobby: Quavo & Takeoff",
+      "short": "Hotel Lobby mic scene",
+      "card_blurb": "Quavo & Takeoff's \"Hotel Lobby\" mic performance. Put two faces in front of the orange wall.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/hotel-lobby.mp4",
+      "poster": "trends/hotel-lobby/poster.jpg",
+      "preview_url": "trends/hotel-lobby/preview.mp4",
+      "duration": 7.5,
+      "mode": "motion-transfer",
+      "resolution": "720p",
+      "prompt": "Replace the person on the left with the first uploaded picture and the person on the right with the second uploaded picture. Keep the orange background, microphone, outfits, motion, camera and timing.",
+      "slots": [
+        {
+          "label": "Person on the left",
+          "hint": "Striped shirt (Takeoff)",
+          "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "Person on the right",
+          "hint": "Orange shirt (Quavo)",
+          "example": "assets/examples/white-chicks-a.jpg"
+        }
+      ],
+      "published": "2026-10-11",
+      "seo": {
+        "title": "Hotel Lobby AI Video Generator: Quavo & Takeoff Face Swap (No Subscription)",
+        "description": "Put two faces in the viral Quavo & Takeoff \"Hotel Lobby\" mic performance. The clip is preloaded: add two photos and generate with Higgsfield Genjutsu. About $3.73, no subscription.",
+        "h1": "Hotel Lobby AI Video Generator",
+        "lead": "Put two faces in Quavo & Takeoff's <b>\"Hotel Lobby\"</b> mic performance. The clip is locked in: add a photo of each person and click Generate.",
+        "og_title": "Hotel Lobby AI Video: Put Your Faces in the Quavo & Takeoff Performance",
+        "og_tagline": "Hotel Lobby AI face swap · Genjutsu · No subscription",
+        "about_html": "<p>\"Hotel Lobby (Unc &amp; Phew)\" is the 2022 single by Quavo and Takeoff, and their performance in front of a bright orange wall and a single studio mic became one of the duo's most replayed clips. The AI trend recreates that shot with new people: two friends trading lines at the mic, with every hand move and head turn kept.</p><p>Most face swap apps paste a flat face over the clip. <a href=\"../../genjutsu/\">Genjutsu</a> keeps the original motion, camera and timing and rebuilds both performers from your photos, so the lighting and the movement match the original.</p>",
+        "steps": [
+          [
+            "Open this page",
+            "The Hotel Lobby clip and the prompt are already loaded. You don't need to find the video or a CapCut template."
+          ],
+          [
+            "Add two photos",
+            "Add one photo for the person on the left (Takeoff, striped shirt) and one for the person on the right (Quavo, orange shirt). Use clear, front-facing, well-lit photos with one face each."
+          ],
+          [
+            "Keep 720p",
+            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+          ],
+          [
+            "Click Generate",
+            "You'll see the exact price first. The video renders in a few minutes, and you can close the tab and come back."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it with \"Hotel Lobby\" as the sound."
+          ]
+        ],
+        "faq": [
+          [
+            "How do I make the Hotel Lobby AI video?",
+            "Open this page. The Quavo & Takeoff \"Hotel Lobby\" clip is already loaded. Add one clear photo for the person on the left and one for the person on the right, then click Generate."
+          ],
+          [
+            "How much does the Hotel Lobby AI video cost?",
+            "The 8-second clip at 720p costs 373 credits (about $3.73), which fits in the $5 starter pack. No subscription."
+          ],
+          [
+            "Who goes where?",
+            "The left slot replaces Takeoff (striped shirt, white sunglasses) and the right slot replaces Quavo (orange shirt)."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid group photos and heavy shadows. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different clip?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
+        ]
+      }
     }
   ]
 }
