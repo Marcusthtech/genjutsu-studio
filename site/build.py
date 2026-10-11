@@ -186,25 +186,37 @@ RES_ROW = """      <div class="row">
 """
 
 
-def studio_trend(t):
+def studio_trend(t, root):
     n = len(t["slots"])
+    rs = t.get("result_sample")
+    result = f"""      <div class="eq-result" id="example">
+        <span class="eq-op">=</span>
+        <figure class="eq-video">
+          <video src="{rel(root, rs['video'])}" poster="{rel(root, rs['poster'])}" muted loop playsinline autoplay preload="metadata"></video>
+          <span class="eq-tag">Example result</span>
+          <button type="button" class="eq-sound" aria-label="Play with sound"
+            onclick="const v=this.previousElementSibling.previousElementSibling;v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊'">🔇</button>
+        </figure>
+      </div>
+""" if rs else ""
     return f"""    <section class="card studio" id="studio">
       <div class="preset-bar">
         <span class="trend">🔥 Trending</span>
         <span>The scene is ready. Add {n} photo{'s' if n > 1 else ''}, then hit Generate.</span>
       </div>
-      <div class="grid2">
+      <div class="grid2 eq">
         <div class="drop locked" id="video-drop">
           <video id="video-preview" muted loop playsinline autoplay hidden></video>
           <span class="lock-tag">🔒 {esc(t['short'])}</span>
         </div>
+        <span class="eq-op eq-plus">+</span>
         <div class="drop images" id="image-drop">
           <input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" hidden />
           <div class="drop-empty" id="image-empty"></div>
           <div class="thumbs" id="thumbs" hidden></div>
         </div>
       </div>
-      <ul class="photo-tips">
+{result}      <ul class="photo-tips">
         <li class="ok">One person per photo</li><li class="ok">Face the camera</li><li class="ok">Good light</li>
         <li class="no">No sunglasses</li><li class="no">No group shots</li>
       </ul>
@@ -252,29 +264,6 @@ STUDIO_CUSTOM = """    <section class="card studio" id="studio">
         <textarea id="prompt" rows="2" maxlength="2000" placeholder="e.g. Replace both characters with the uploaded pictures"></textarea>
       </label>
 """ + RES_ROW + """    </section>
-"""
-
-
-def result_sample(t, root):
-    rs = t.get("result_sample")
-    if not rs:
-        return ""
-    inputs = "".join(
-        f'<figure><img src="{rel(root, s["example"])}" alt="Example photo: {esc(s["label"])}" loading="lazy" /><figcaption>{esc(s["label"])}</figcaption></figure>'
-        for s in t["slots"] if s.get("example")
-    )
-    return f"""    <section class="result-sample" id="example">
-      <h2>Example result</h2>
-      <p class="muted">These two photos went in, and this video came out. Same scene, same price as yours.</p>
-      <div class="rs-row">
-        <div class="rs-inputs">{inputs}</div>
-        <div class="rs-arrow" aria-hidden="true">→</div>
-        <figure class="rs-video">
-          <video src="{rel(root, rs['video'])}" poster="{rel(root, rs['poster'])}" controls muted loop playsinline preload="metadata"></video>
-          <figcaption>Result · 720p · tap 🔊 for sound</figcaption>
-        </figure>
-      </div>
-    </section>
 """
 
 
@@ -327,8 +316,7 @@ for t in TRENDS:
       {'<p><a class="see-example" href="#example">▶ See an example result</a></p>' if t.get("result_sample") else ''}
     </section>
 
-{studio_trend(t)}
-{result_sample(t, root)}
+{studio_trend(t, root)}
 {HISTORY}
     <section class="seo">
       <h2>About the trend</h2>

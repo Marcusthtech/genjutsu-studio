@@ -187,20 +187,19 @@ main > .crumbs { padding-top: 6px; }
 .photo-tips li.no::before { content: "✕ "; color: var(--bad); font-weight: 700; }
 
 .see-example { display: inline-block; margin-top: 10px; font-weight: 600; text-decoration: none; }
-.result-sample { margin-top: 32px; }
-.result-sample h2 { margin-bottom: 4px; }
-.rs-row { display: grid; grid-template-columns: auto auto 1fr; gap: 14px; align-items: center; margin-top: 14px; }
-.rs-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 220px; }
-.rs-inputs figure, .rs-video { margin: 0; }
-.rs-inputs img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); display: block; }
-figcaption { color: var(--muted); font-size: 12px; margin-top: 5px; text-align: center; }
-.rs-arrow { font-size: 28px; color: var(--accent); }
-.rs-video video { width: 100%; border-radius: 14px; background: #000; display: block; border: 1px solid var(--line); }
+.grid2.eq { grid-template-columns: 1fr auto 1fr; align-items: center; }
+.eq-op { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--card2);
+  border: 1px solid var(--line); color: var(--accent); font-size: 20px; font-weight: 800; }
+.eq-result { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px; }
+.eq-video { position: relative; margin: 0; width: min(100%, 380px); }
+.eq-video video { width: 100%; display: block; border-radius: 14px; border: 2px solid var(--accent); background: #000; }
+.eq-tag { position: absolute; left: 8px; top: 8px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+.eq-sound { position: absolute; right: 8px; bottom: 8px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(0,0,0,.7); }
 
 @media (max-width: 640px) {
-  .rs-row { grid-template-columns: 1fr; }
-  .rs-inputs { width: 100%; max-width: 280px; margin: 0 auto; }
-  .rs-arrow { transform: rotate(90deg); text-align: center; }
+  .grid2.eq { grid-template-columns: 1fr; justify-items: stretch; }
+  .grid2.eq .eq-plus { justify-self: center; }
   .nav { margin-left: 8px; } .nav a { padding: 6px 8px; font-size: 14px; }
   .top-actions .btn.ghost { padding: 8px 10px; }
   .seo-grid { grid-template-columns: 1fr; }
