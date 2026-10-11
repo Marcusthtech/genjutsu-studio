@@ -170,8 +170,11 @@ function renderThumbs() {
   state.images.forEach((f, i) => {
     const d = document.createElement("div");
     if (!f) {
-      d.className = "thumb slot";
-      d.innerHTML = `<span class="slot-plus">+</span><span class="slot-label"></span><span class="slot-hint"></span>`;
+      const ex = T.slots[i].example;
+      d.className = "thumb slot" + (ex ? " has-example" : "");
+      d.innerHTML = `${ex ? `<img class="slot-example" alt="" /><span class="example-tag">Example</span>` : ""}
+        <span class="slot-cta"><span class="slot-plus">+</span><span class="slot-label"></span><span class="slot-hint"></span><span class="slot-add">Add photo</span></span>`;
+      if (ex) d.querySelector(".slot-example").src = ex;
       d.querySelector(".slot-label").textContent = T.slots[i].label;
       d.querySelector(".slot-hint").textContent = T.slots[i].hint || "";
       d.onclick = (e) => { e.stopPropagation(); pickImage(i); };
@@ -403,7 +406,8 @@ async function renderPayPal() {
 // ---------------- boot ----------------
 if (T) {
   $("video-preview").poster = T.poster || "";
-  showVideo(T.video_url, () => { state.video = { url: T.video_url }; });
+  // Preview plays from GitHub Pages; the API gets the storage URL.
+  showVideo(T.preview_url || T.video_url, () => { state.video = { url: T.video_url }; });
 }
 if (HAS_STUDIO) { selectMode(state.mode); selectRes(state.res); renderThumbs(); }
 refresh();

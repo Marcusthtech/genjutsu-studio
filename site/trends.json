@@ -7,14 +7,22 @@
       "short": "White Chicks car scene",
       "card_blurb": "Terry Crews sings \"A Thousand Miles\" in the car. Put two faces in the seats.",
       "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/white-chicks-car.mp4",
-      "poster": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/white-chicks-car.jpg",
+      "poster": "trends/white-chicks/poster.jpg",
       "duration": 18.4,
       "mode": "motion-transfer",
       "resolution": "720p",
       "prompt": "Replace both characters with the uploaded pictures",
       "slots": [
-        { "label": "Person on the left", "hint": "Passenger seat" },
-        { "label": "Person on the right", "hint": "Driver (Terry Crews)" }
+        {
+          "label": "Person on the left",
+          "hint": "Passenger seat",
+          "example": "assets/examples/example-a.jpg"
+        },
+        {
+          "label": "Person on the right",
+          "hint": "Driver (Terry Crews)",
+          "example": "assets/examples/example-b.jpg"
+        }
       ],
       "published": "2026-09-30",
       "seo": {
@@ -26,21 +34,55 @@
         "og_tagline": "A Thousand Miles AI face swap · Genjutsu · No subscription",
         "about_html": "<p>In the 2004 comedy <i>White Chicks</i>, Terry Crews' character Latrell sings Vanessa Carlton's \"A Thousand Miles\" in his car, and the scene has been a meme for twenty years. In 2026 AI face swaps made it blow up again, peaking during the World Cup: people swap in themselves, their friends or their favorite players and post it to TikTok, Reels and Shorts.</p><p>Most face swap apps paste a flat face over the clip. <a href=\"../../genjutsu/\">Genjutsu</a> works differently. It keeps the original motion, camera move and timing and rebuilds the characters from your photos, so the car lighting and every head turn match.</p>",
         "steps": [
-          ["Open this page", "The White Chicks car scene and the prompt are already loaded. You don't need to find the clip or a CapCut template."],
-          ["Add two photos", "Add one photo for the person on the left (passenger seat) and one for the person on the right (Terry Crews' seat, the driver). Use clear, front-facing, well-lit photos with one face each."],
-          ["Keep 720p", "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."],
-          ["Click Generate", "You'll see the exact price first. The video renders in a few minutes, and you can close the tab and come back."],
-          ["Download and post", "Download the MP4 and post it. Add \"A Thousand Miles\" in the app you post with for the full meme."]
+          [
+            "Open this page",
+            "The White Chicks car scene and the prompt are already loaded. You don't need to find the clip or a CapCut template."
+          ],
+          [
+            "Add two photos",
+            "Add one photo for the person on the left (passenger seat) and one for the person on the right (Terry Crews' seat, the driver). Use clear, front-facing, well-lit photos with one face each."
+          ],
+          [
+            "Keep 720p",
+            "720p is the default and looks good on TikTok, Reels and Shorts. 480p is cheaper and 1080p is sharper."
+          ],
+          [
+            "Click Generate",
+            "You'll see the exact price first. The video renders in a few minutes, and you can close the tab and come back."
+          ],
+          [
+            "Download and post",
+            "Download the MP4 and post it. Add \"A Thousand Miles\" in the app you post with for the full meme."
+          ]
         ],
         "faq": [
-          ["How do I make the White Chicks AI video?", "Open this page. The White Chicks car scene (the \"A Thousand Miles\" singalong) is already loaded. Add one clear photo for the person on the left and one for the person on the right, then click Generate. Your video is ready in a few minutes."],
-          ["Is the White Chicks AI face swap free?", "There's no subscription and no monthly plan. You buy a one-time credit pack and pay only for the videos you make. The exact price shows before you click Generate."],
-          ["How much does the White Chicks AI video cost?", "The full 19-second car scene at 720p costs 1,957 credits (about $19.57). 480p is cheaper and 1080p is sharper."],
-          ["Is there a White Chicks AI template without CapCut?", "Yes. The scene is preloaded right here in the browser, on phone or desktop."],
-          ["What photos work best?", "Clear, front-facing, well-lit photos of one person each. Avoid sunglasses, heavy shadows and group photos. Only use photos of people who agreed to be in the video."],
-          ["Can I use a different scene?", "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."]
+          [
+            "How do I make the White Chicks AI video?",
+            "Open this page. The White Chicks car scene (the \"A Thousand Miles\" singalong) is already loaded. Add one clear photo for the person on the left and one for the person on the right, then click Generate. Your video is ready in a few minutes."
+          ],
+          [
+            "Is the White Chicks AI face swap free?",
+            "There's no subscription and no monthly plan. You buy a one-time credit pack and pay only for the videos you make. The exact price shows before you click Generate."
+          ],
+          [
+            "How much does the White Chicks AI video cost?",
+            "The full 19-second car scene at 720p costs 1,957 credits (about $19.57). 480p is cheaper and 1080p is sharper."
+          ],
+          [
+            "Is there a White Chicks AI template without CapCut?",
+            "Yes. The scene is preloaded right here in the browser, on phone or desktop."
+          ],
+          [
+            "What photos work best?",
+            "Clear, front-facing, well-lit photos of one person each. Avoid sunglasses, heavy shadows and group photos. Only use photos of people who agreed to be in the video."
+          ],
+          [
+            "Can I use a different scene?",
+            "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
+          ]
         ]
-      }
+      },
+      "preview_url": "trends/white-chicks/preview.mp4"
     }
   ]
 }

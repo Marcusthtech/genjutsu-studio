@@ -23,6 +23,16 @@ ASSET_VER = TODAY.replace("-", "")
 esc = html.escape
 
 
+def abs_url(p):
+    """Site-relative asset path (or full URL) -> absolute URL, for meta tags / JSON-LD."""
+    return p if p.startswith("http") else BASE + p
+
+
+def rel(root, p):
+    """Site-relative asset path (or full URL) -> URL relative to the current page."""
+    return p if p.startswith("http") else root + p
+
+
 def ld(*objs):
     return "\n".join(
         f'  <script type="application/ld+json">{json.dumps(o, ensure_ascii=False)}</script>' for o in objs
@@ -53,7 +63,7 @@ def og_image(path, trend=None):
     if trend and (DOCS / "trends" / trend["slug"] / "og.jpg").exists():
         return f"{BASE}trends/{trend['slug']}/og.jpg"
     if trend:
-        return trend["poster"]
+        return abs_url(trend["poster"])
     return f"{BASE}og.jpg"
 
 
@@ -194,6 +204,10 @@ def studio_trend(t):
           <div class="thumbs" id="thumbs" hidden></div>
         </div>
       </div>
+      <ul class="photo-tips">
+        <li class="ok">One person per photo</li><li class="ok">Face the camera</li><li class="ok">Good light</li>
+        <li class="no">No sunglasses</li><li class="no">No group shots</li>
+      </ul>
 {RES_ROW}    </section>
 """
 
@@ -258,7 +272,12 @@ for t in TRENDS:
     path = f"trends/{t['slug']}/"
     root = "../../"
     s = t["seo"]
-    page = {"kind": "trend", "trend": {k: t[k] for k in ("slug", "short", "video_url", "poster", "mode", "resolution", "prompt", "slots")}}
+    page = {"kind": "trend", "trend": {
+        **{k: t[k] for k in ("slug", "short", "video_url", "mode", "resolution", "prompt")},
+        "poster": rel(root, t["poster"]),
+        "preview_url": rel(root, t.get("preview_url", t["video_url"])),
+        "slots": [{**s, "example": rel(root, s["example"]) if s.get("example") else None} for s in t["slots"]],
+    }}
     howto = {
         "@context": "https://schema.org", "@type": "HowTo", "name": f"How to make the {t['name']} AI video",
         "image": og_image(path, t), "totalTime": "PT5M",
@@ -312,7 +331,7 @@ for t in TRENDS:
 
 # ---------------- home ----------------
 cards = "\n".join(f"""        <a class="trend-card" href="trends/{t['slug']}/">
-          <div class="tc-media"><img src="{t['poster']}" alt="{esc(t['name'])} AI video trend" loading="lazy" /><span class="tc-badge">🔥 Trending</span></div>
+          <div class="tc-media"><img src="{rel('', t['poster'])}" alt="{esc(t['name'])} AI video trend" loading="lazy" /><span class="tc-badge">🔥 Trending</span></div>
           <div class="tc-body"><b>{esc(t['name'])}</b><span>{esc(t['card_blurb'])}</span>
             <span class="tc-meta">{len(t['slots'])} photos · {-(-t['duration'] // 1):.0f}s · {price_text(t)}</span></div>
         </a>""" for t in TRENDS)
