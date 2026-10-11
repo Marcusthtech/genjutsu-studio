@@ -422,15 +422,43 @@ if (HAS_STUDIO) { selectMode(state.mode); selectRes(state.res); renderThumbs(); 
 refresh();
 initAuth();
 
-// Gallery: hover a trend card to play its scene with sound (browsers may force mute until the first click on the page).
-document.querySelectorAll(".trend-card .tc-media").forEach((m) => {
+// Gallery: hover a trend card to play its scene with sound. Browsers block sound until the visitor
+// has clicked/tapped the page once, so until then it plays muted and the 🔇 badge turns sound on.
+const cards = [...document.querySelectorAll(".trend-card .tc-media")].filter((m) => m.querySelector("video"));
+let soundOk = navigator.userActivation?.hasBeenActive ?? false;
+const badgeText = (v) => (v.muted ? "🔇 Tap for sound" : "🔊");
+function startCard(m) {
   const v = m.querySelector("video"), badge = m.querySelector(".tc-sound");
-  if (!v) return;
-  const show = () => { v.classList.add("on"); badge.hidden = false; badge.textContent = v.muted ? "🔇" : "🔊"; };
-  m.addEventListener("mouseenter", () => {
-    if (!v.src) v.src = v.dataset.src;
-    v.muted = false;
-    v.play().then(show).catch(() => { v.muted = true; v.play().then(show).catch(() => {}); });
+  m._hover = true;
+  cards.forEach((o) => o !== m && stopCard(o));
+  if (!v.src) v.src = v.dataset.src;
+  const shown = () => { if (!m._hover) return stopCard(m); v.classList.add("on"); badge.hidden = false; badge.textContent = badgeText(v); };
+  v.muted = !soundOk;
+  v.play().then(shown).catch((e) => {
+    if (!m._hover || e.name !== "NotAllowedError") return; // left the card, or play() was interrupted by pause()
+    soundOk = false; v.muted = true;
+    v.play().then(shown).catch(() => {});
   });
-  m.addEventListener("mouseleave", () => { v.pause(); v.currentTime = 0; v.classList.remove("on"); badge.hidden = true; });
+}
+function stopCard(m) {
+  const v = m.querySelector("video");
+  m._hover = false;
+  v.pause(); if (v.readyState) v.currentTime = 0;
+  v.classList.remove("on"); m.querySelector(".tc-sound").hidden = true;
+}
+cards.forEach((m) => {
+  m.addEventListener("mouseenter", () => startCard(m));
+  m.addEventListener("mouseleave", () => stopCard(m));
+  m.querySelector(".tc-sound").addEventListener("click", (e) => {
+    e.preventDefault(); e.stopPropagation(); // don't open the trend page
+    const v = m.querySelector("video");
+    soundOk = true; v.muted = !v.muted; v.play().catch(() => {});
+    m.querySelector(".tc-sound").textContent = badgeText(v);
+  });
 });
+// Any click/tap/key on the page unlocks sound; unmute whatever is playing now.
+["pointerdown", "keydown"].forEach((ev) => addEventListener(ev, (e) => {
+  if (soundOk || e.target.closest?.(".tc-sound")) return; // the badge handles its own click
+  soundOk = true;
+  cards.filter((m) => m._hover).forEach((m) => { const v = m.querySelector("video"); v.muted = false; m.querySelector(".tc-sound").textContent = badgeText(v); });
+}, { capture: true }));
