@@ -41,7 +41,7 @@ Visitors sign in with email, buy credits via PayPal, and generate videos. No sub
    supabase secrets set HF_API_KEY_ID=… HF_API_KEY_SECRET=… \
      PAYPAL_CLIENT_ID=… PAYPAL_CLIENT_SECRET=… PAYPAL_ENV=sandbox \
      WEBHOOK_SECRET=$(openssl rand -hex 24) MARKUP=1.5 \
-     ALLOWED_ORIGIN=https://<you>.github.io
+     ALLOWED_ORIGIN=https://genjutsu-trends.com,https://www.genjutsu-trends.com
    supabase functions deploy paypal generate jobs hf-webhook
    ```
 5. Fill `docs/config.js` with the Supabase URL, anon key and PayPal **client id** (public values), push.

@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://shohamtal.github.io/genjutsu-studio/sitemap.xml
+Sitemap: https://genjutsu-trends.com/sitemap.xml
