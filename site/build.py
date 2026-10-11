@@ -17,7 +17,8 @@ DATA = json.loads((SITE / "trends.json").read_text())
 BASE = DATA["base_url"]
 TRENDS = DATA["trends"]
 TODAY = date.today().isoformat()
-CREDITS_PER_SEC_720 = 103  # keep in sync with docs/config.js
+CREDITS_PER_SEC_720 = 34.05  # keep in sync with docs/config.js
+FEE_CREDITS = 100
 ASSET_VER = TODAY.replace("-", "")
 
 esc = html.escape
@@ -275,7 +276,7 @@ def write(rel, content):
 
 
 def price_text(t):
-    credits = round(min(30, max(4, -(-t["duration"] // 1))) * CREDITS_PER_SEC_720)
+    credits = int(-(-min(30, max(4, -(-t["duration"] // 1))) * CREDITS_PER_SEC_720 // 1)) + FEE_CREDITS
     return f"{credits:,} credits (≈ ${credits / 100:.2f}) at 720p"
 
 
@@ -351,7 +352,7 @@ cards = "\n".join(f"""        <a class="trend-card" href="trends/{t['slug']}/">
 home_faq = [
     ("What is Genjutsu Studio?", "A site that lets you make viral AI video trends with Higgsfield's Genjutsu model. Pick a trend, add your photos and generate. No subscription."),
     ("How does it work?", "Every trend page has its scene already loaded. You only add a photo for each person. On the Custom page you can upload your own video, up to 8 photos and your own prompt."),
-    ("How much does it cost?", "You pay per second of video, with no subscription. At 720p it's 103 credits per second (100 credits = $1). Every page shows the exact price before you generate."),
+    ("How much does it cost?", "You pay per second of video, with no subscription. At 720p it's about 34 credits per second plus 100 per video (100 credits = $1). Every page shows the exact price before you generate."),
     ("What if the generation fails?", "Your credits are refunded automatically, including when the content is blocked by moderation."),
     ("Can I close the page while it's generating?", "Yes. Your video keeps rendering. Sign in again and you'll find it under \"Your videos\"."),
     ("Do credits expire?", "Credits stay on your account for 12 months."),
@@ -405,7 +406,7 @@ write("index.html", home)
 custom_faq = [
     ("What can I make on the Custom page?", "Upload any MP4 between 4 and 30 seconds, add 1 to 8 reference photos and, optionally, a prompt. Motion transfer recasts the people in the clip; object swap replaces one person or object."),
     ("What prompt should I write?", "Keep it short and concrete, e.g. \"Replace both characters with the uploaded pictures\" or \"Replace the man in the red shirt with the person in the photo\"."),
-    ("How much does it cost?", "You pay per second of the source video (max 30 s). At 720p it's 103 credits per second (100 credits = $1). The exact price shows before you generate."),
+    ("How much does it cost?", "You pay per second of the source video (max 30 s). At 720p it's about 34 credits per second plus 100 per video (100 credits = $1). The exact price shows before you generate."),
 ]
 custom = head(path="custom/", title="Custom Genjutsu Video: Upload Any Clip and Photos (No Subscription)",
               description="Make your own AI video trend with Higgsfield Genjutsu: upload a 4–30 second clip, up to 8 photos and your own prompt. Motion transfer or object swap, pay per video.",

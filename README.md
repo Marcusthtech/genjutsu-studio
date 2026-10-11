@@ -21,7 +21,7 @@ Visitors sign in with email, buy credits via PayPal, and generate videos. No sub
 ## How it works
 1. User uploads video + photo(s) → Supabase Storage bucket `inputs/<user_id>/…` (public URLs).
 2. `generate` asks Higgsfield's `/estimate` for the real USD cost, converts to credits
-   (`1 credit = $0.01 retail`, `retail = cost × MARKUP`), atomically deducts, submits with
+   (`1 credit = $0.01 retail`, `retail = cost × HF_DISCOUNT × MARKUP + FEE_USD`), atomically deducts, submits with
    `Idempotency-Key = job id` and a webhook.
 3. The job row lives in Postgres, so refreshing/closing the page never loses it. The page polls `jobs`;
    Higgsfield also calls `hf-webhook`. Both re-read the authoritative status from Higgsfield.
@@ -45,7 +45,7 @@ Visitors sign in with email, buy credits via PayPal, and generate videos. No sub
    supabase functions deploy paypal generate jobs hf-webhook
    ```
 5. Fill `docs/config.js` with the Supabase URL, anon key and PayPal **client id** (public values), push.
-   Keep `PACKS` in sync with `supabase/functions/paypal/index.ts`, and `CREDITS_PER_SEC` ≈ rate × MARKUP × 100.
+   Keep `PACKS` in sync with `supabase/functions/paypal/index.ts`, and `CREDITS_PER_SEC` ≈ rate × HF_DISCOUNT × MARKUP × 100 and `FEE_CREDITS` = FEE_USD × 100.
 6. Test with PayPal sandbox buyer account → switch `PAYPAL_ENV=live` + live client id/secret.
 
 ## Pricing reference (Higgsfield, Sept 2026)

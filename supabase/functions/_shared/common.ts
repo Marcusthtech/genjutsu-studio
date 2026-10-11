@@ -58,10 +58,12 @@ export function hfHeaders(extra: Record<string, string> = {}) {
   };
 }
 
-/** 1 credit = $0.01 retail. Retail = Higgsfield cost x MARKUP. */
+/** 1 credit = $0.01 retail. Retail = list cost x HF_DISCOUNT x MARKUP + FEE_USD per video. */
 export function usdToCredits(usd: number): number {
+  const discount = Number(Deno.env.get("HF_DISCOUNT") ?? "1");
   const markup = Number(Deno.env.get("MARKUP") ?? "1.5");
-  return Math.max(1, Math.ceil(usd * markup * 100));
+  const fee = Number(Deno.env.get("FEE_USD") ?? "0");
+  return Math.max(1, Math.ceil(usd * discount * markup * 100) + Math.round(fee * 100));
 }
 
 /** Fetch status from Higgsfield, persist it on the job, refund on failure. */

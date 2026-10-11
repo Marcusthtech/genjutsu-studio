@@ -28,7 +28,7 @@ function toast(msg, ms = 3500) {
 }
 const clampSecs = (d) => Math.min(30, Math.max(4, Math.ceil(d)));
 function estimate() {
-  return state.duration ? Math.ceil(clampSecs(state.duration) * C.CREDITS_PER_SEC[state.res]) : 0;
+  return state.duration ? Math.ceil(clampSecs(state.duration) * C.CREDITS_PER_SEC[state.res]) + (C.FEE_CREDITS || 0) : 0;
 }
 async function callFn(name, body) {
   const { data, error } = await sb.functions.invoke(name, { body });
@@ -226,7 +226,7 @@ function refresh() {
         ? `You have <b>${state.credits.toLocaleString()}</b> credits, so <b>${(state.credits - cost).toLocaleString()}</b> will be left after this video.`
         : `You have <b>${state.credits.toLocaleString()}</b> credits. You need <b>${(cost - state.credits).toLocaleString()}</b> more.`)
       : "Sign in to see your balance.";
-    bd.innerHTML = `<div class="bd-math"><span>${clampSecs(state.duration)} sec video</span><span>×</span><span>${rate} credits/sec at ${state.res}</span><span>=</span><b>${cost.toLocaleString()} credits</b></div>
+    bd.innerHTML = `<div class="bd-math"><span>${clampSecs(state.duration)} sec video</span><span>×</span><span>${rate} credits/sec at ${state.res}</span>${C.FEE_CREDITS ? `<span>+</span><span>${C.FEE_CREDITS} per video</span>` : ""}<span>=</span><b>${cost.toLocaleString()} credits</b></div>
       <div class="bd-note">Output length matches the source video (max 30 s). ${bal} Credits are held when you start and refunded automatically if it fails.</div>`;
   }
   const need = T ? state.images.length : 1;
