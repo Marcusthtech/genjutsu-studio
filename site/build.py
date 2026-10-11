@@ -209,6 +209,8 @@ def studio_trend(t, root):
         <div class="drop locked" id="video-drop">
           <video id="video-preview" muted loop playsinline autoplay hidden></video>
           <span class="lock-tag">🔒 {esc(t['short'])}</span>
+          <button type="button" class="eq-sound" aria-label="Play with sound"
+            onclick="const v=document.getElementById('video-preview');v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊'">🔇</button>
         </div>
         <span class="eq-op eq-plus">+</span>
         <div class="drop images" id="image-drop">
