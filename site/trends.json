@@ -430,41 +430,50 @@
       }
     },
     {
-      "slug": "mafia-daughter",
-      "name": "Mafia Daughter: The Entrance",
-      "short": "Mafia Daughter entrance",
-      "card_blurb": "Walk through a crowd of men in black like the mafia boss's daughter. One photo.",
+      "slug": "storm",
+      "name": "Genjutsu STORM: The Suit Crowd",
+      "short": "STORM suit crowd",
+      "card_blurb": "The STORM trend: you stand calm in white while a crowd in suits erupts on the beat drop.",
       "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/mafia-daughter.mp4",
-      "poster": "trends/mafia-daughter/poster.jpg",
-      "preview_url": "trends/mafia-daughter/preview.mp4",
+      "poster": "trends/storm/poster.jpg",
+      "preview_url": "trends/storm/preview.mp4",
       "duration": 29.96,
       "mode": "motion-transfer",
       "resolution": "480p",
-      "prompt": "Replace the woman in the white dress with the uploaded picture. Keep the crowd of men in black, the building, her white dress, the choreography, camera movement and timing.",
+      "prompt": "Replace the person in white (the calm lead in the middle of the crowd) with the first uploaded picture. If a second picture is uploaded, give the people in the suit crowd that person's face. Keep the white outfit, the black suits, the building, the choreography, the beat-drop moment, camera movement and timing.",
       "slots": [
         {
-          "label": "You",
-          "hint": "The woman in white",
+          "label": "The lead",
+          "hint": "Calm figure in white",
           "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "The crowd",
+          "hint": "Optional: one face for everyone",
+          "example": "assets/examples/white-chicks-a.jpg"
         }
       ],
       "published": "2026-10-12",
       "seo": {
-        "title": "Mafia Daughter AI Video Generator: Crowd Entrance Trend (No Subscription)",
-        "description": "Star in the viral \"mafia boss's daughter\" entrance: walk through a crowd of men in black. Add one photo and generate with Higgsfield Genjutsu. No subscription, pay per video.",
-        "h1": "Mafia Daughter AI Video Generator",
-        "lead": "Walk through a crowd of men in black like the <b>mafia boss's daughter</b>. The scene is locked in: add one photo and click Generate.",
-        "og_title": "Mafia Daughter AI Video: Your Crowd Entrance",
-        "og_tagline": "Mafia daughter AI trend · Genjutsu · No subscription",
-        "about_html": "<p>The \"mafia boss's daughter\" trend took off on TikTok in Thailand: a woman in a white dress moves through a huge crowd of men in black who part, bow and dance around her. Creators made it with Higgsfield Genjutsu, and now anyone can put their own face in the lead.</p><p><a href=\"../../genjutsu/\">Genjutsu</a> keeps the original crowd, choreography and camera moves and rebuilds the lead from your photo, so it looks like you were really there.</p>",
+        "title": "Genjutsu STORM AI Video Generator: Suit Crowd Trend (No Subscription)",
+        "description": "Make the viral Genjutsu STORM video: you stand calm in white while a crowd in suits erupts on the beat drop. Add a photo and generate with Higgsfield Genjutsu. No subscription, pay per video.",
+        "h1": "Genjutsu STORM AI Video Generator",
+        "lead": "The <b>STORM</b> trend: you stay calm in white while the suit crowd loses control on the beat drop. Add your photo and click Generate.",
+        "og_title": "Genjutsu STORM: You Stay Still, the Suit Crowd Erupts",
+        "og_tagline": "STORM AI trend · Genjutsu · No subscription",
+        "about_html": "<p>STORM is the best-known Genjutsu trend: one calm figure in white stands still in the middle of a huge crowd in black suits, and on the beat drop everyone around them erupts. Creators recast the lead with themselves, and versions like the Thai \"mafia boss's daughter\" edit spread across TikTok, Reels and X.</p><p><a href=\"../../genjutsu/\">Genjutsu</a> keeps the original crowd, choreography and camera moves and rebuilds the lead from your photo. Add a second photo to put one face on the whole crowd.</p>",
         "steps": [
           [
             "Open this page",
-            "The crowd scene and the prompt are already loaded. You don't need to find the video."
+            "The STORM crowd scene and the prompt are already loaded. You don't need to find the video."
           ],
           [
             "Add your photo",
-            "One clear, front-facing, well-lit photo of the person who'll play the lead."
+            "One clear, front-facing, well-lit photo for the calm lead in white."
+          ],
+          [
+            "Optional: add the crowd",
+            "Add a second photo and the whole suit crowd gets that face. Your friend, your boss, your ex."
           ],
           [
             "Click Generate",
@@ -477,16 +486,20 @@
         ],
         "faq": [
           [
-            "How do I make the mafia daughter AI video?",
-            "Open this page, add one photo of yourself and click Generate. The crowd scene is already loaded."
+            "What is the Genjutsu STORM trend?",
+            "An AI video trend where one calm person in white stands still while a crowd in black suits erupts around them on the beat drop. It's made with Higgsfield's Genjutsu model."
+          ],
+          [
+            "How do I make the STORM video?",
+            "Open this page, add one photo for the lead and click Generate. Add a second photo if you want the crowd to have one face too."
           ],
           [
             "How much does it cost?",
-            "The 30-second clip at 480p costs 577 credits (about $5.77). 720p and 1080p are sharper and cost more. No subscription."
+            "The 30-second clip at 480p costs 577 credits (about $5.77), with one photo or two. 720p and 1080p are sharper and cost more. No subscription."
           ],
           [
-            "Does it have to be a woman?",
-            "No. Anyone can take the lead. The dress and choreography stay the same."
+            "Is this the mafia boss's daughter video?",
+            "Yes. The \"mafia boss's daughter\" TikTok is a STORM remake with a woman in white as the lead. This template uses that version."
           ],
           [
             "What photos work best?",
@@ -497,7 +510,8 @@
             "Yes. Use the Custom trend page to upload any MP4 between 4 and 30 seconds with your own photos and prompt."
           ]
         ]
-      }
+      },
+      "min_photos": 1
     },
     {
       "slug": "shrek-raindance",

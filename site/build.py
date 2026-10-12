@@ -509,13 +509,14 @@ pr += f"""  <main>
 pr += footer("../", app=False)
 write("pricing/index.html", pr)
 
-# ---------------- old URL → new trend page ----------------
-target = f"{BASE}trends/white-chicks/"
-write("white-chicks-ai-trend/index.html", f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8" /><title>Moved: White Chicks AI video</title>
-<link rel="canonical" href="{target}" /><meta name="robots" content="noindex" />
-<meta http-equiv="refresh" content="0; url=../trends/white-chicks/" /></head>
-<body><p>This guide moved to <a href="../trends/white-chicks/">the White Chicks AI video page</a>.</p></body></html>
+# ---------------- old URLs → new pages ----------------
+REDIRECTS = {"white-chicks-ai-trend/": "trends/white-chicks/", "trends/mafia-daughter/": "trends/storm/"}
+for old, new in REDIRECTS.items():
+    write(f"{old}index.html", f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><title>Moved</title>
+<link rel="canonical" href="{BASE}{new}" /><meta name="robots" content="noindex" />
+<meta http-equiv="refresh" content="0; url={BASE}{new}" /></head>
+<body><p>This page moved to <a href="{BASE}{new}">{BASE}{new}</a>.</p></body></html>
 """)
 
 # ---------------- sitemap / robots ----------------
