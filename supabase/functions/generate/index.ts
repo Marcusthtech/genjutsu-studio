@@ -1,10 +1,9 @@
-// POST {workflow, resolution, prompt, video_url, image_urls, duration} -> {job}
-// Prices the request, holds the credits, submits to Higgsfield.
+// POST {workflow, resolution, prompt, video_url, image_urls} -> {job}
+// Prices the request from the video's real length, holds the credits, submits to Higgsfield.
 import {
-  admin, FALLBACK_USD_PER_SEC, getUser, HF_BASE, hfHeaders, json, RESOLUTIONS, serve, usdToCredits, WORKFLOWS,
+  admin, deleteInputs, FALLBACK_USD_PER_SEC, getUser, HF_BASE, hfHeaders, INPUTS_PUBLIC, inputPath, json,
+  mp4Duration, PRESETS_PUBLIC, RESOLUTIONS, serve, signInput, usdToCredits, WORKFLOWS,
 } from "../_shared/common.ts";
-
-const STORAGE_PREFIX = `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/inputs/`;
 
 serve(async (req) => {
   const user = await getUser(req);
@@ -17,12 +16,12 @@ serve(async (req) => {
   const prompt = String(b.prompt ?? "").slice(0, 2000);
   const video_url = String(b.video_url ?? "");
   const image_urls: string[] = Array.isArray(b.image_urls) ? b.image_urls.map(String) : [];
-  const ownPrefix = `${STORAGE_PREFIX}${user.id}/`;
+  const ownPrefix = `${INPUTS_PUBLIC}${user.id}/`;
 
   if (!WORKFLOWS.includes(workflow as never)) return json({ error: "Pick a mode." }, 400);
   if (!RESOLUTIONS.includes(resolution as never)) return json({ error: "Pick a resolution." }, 400);
-  const presetPrefix = `${STORAGE_PREFIX}presets/`;
-  if (!video_url.startsWith(ownPrefix) && !video_url.startsWith(presetPrefix)) {
+  const isPreset = video_url.startsWith(PRESETS_PUBLIC) && /^[a-z0-9-]+\.mp4$/.test(video_url.slice(PRESETS_PUBLIC.length));
+  if (!video_url.startsWith(ownPrefix) && !isPreset) {
     return json({ error: "Upload a source video." }, 400);
   }
   if (image_urls.length < 1 || image_urls.length > 8 || !image_urls.every((u) => u.startsWith(ownPrefix))) {
@@ -37,22 +36,13 @@ serve(async (req) => {
     if (!testers.includes(String(user.email ?? "").toLowerCase())) return json({ error: "Test mode is not enabled for this account." }, 403);
   }
 
-  const input = { video_url, image_urls, prompt, resolution };
-  const endpoint = `higgsfield/genjutsu/${workflow}/v1.0`;
-
-  // Price: Higgsfield's own estimate; fall back to the published per-second rate.
-  let usd: number | null = null;
-  if (!mock) try {
-    const est = await fetch(`${HF_BASE}/estimate/${endpoint}`, {
-      method: "POST", headers: hfHeaders(), body: JSON.stringify(input),
-    });
-    if (est.ok) usd = Number((await est.json()).usd);
-  } catch { /* fall through */ }
-  if (!usd || !isFinite(usd)) {
-    const secs = Math.min(30, Math.max(4, Math.ceil((Number(b.duration) || 30) - 0.05)));
-    usd = FALLBACK_USD_PER_SEC[resolution] * secs;
-  }
-  const cost = usdToCredits(usd);
+  // Price from the file itself, never from what the browser says. Higgsfield bills per started
+  // second of output (= source length, capped at 30s); ignore container padding under 50ms.
+  const secs = await mp4Duration(video_url);
+  if (secs === null) return json({ error: "We couldn't read that video. Please upload a standard MP4." }, 400);
+  if (secs < 3.95) return json({ error: "The video must be at least 4 seconds." }, 400);
+  const billed = Math.min(30, Math.max(4, Math.ceil(secs - 0.05)));
+  const cost = usdToCredits(FALLBACK_USD_PER_SEC[resolution] * billed);
   if (b.quote_only) return json({ cost });
 
   const { data: ok } = await admin.rpc("spend_credits", { p_user: user.id, p_amount: cost });
@@ -73,22 +63,41 @@ serve(async (req) => {
     return json({ job: saved });
   }
 
-  const hook = `${Deno.env.get("SUPABASE_URL")}/functions/v1/hf-webhook?secret=${Deno.env.get("WEBHOOK_SECRET")}`;
-  const r = await fetch(`${HF_BASE}/${endpoint}?hf_webhook=${encodeURIComponent(hook)}`, {
-    method: "POST",
-    headers: hfHeaders({ "Idempotency-Key": job.id }),
-    body: JSON.stringify(input),
-  });
-  const sub = await r.json().catch(() => ({}));
-  if (!r.ok || !sub.request_id) {
-    console.error("higgsfield submit failed", r.status, JSON.stringify(sub));
-    // 4xx other than auth usually means bad input the user can fix; everything else is on us.
-    const msg = r.status === 422 || r.status === 400
-      ? "The video or photos weren't accepted. Check the video is 4–30s MP4 and try again."
-      : "The generation service is unavailable right now. Please try again later.";
+  const fail = async (msg: string, status: number) => {
     await admin.from("jobs").update({ status: "failed", error: msg, updated_at: new Date().toISOString() }).eq("id", job.id);
     await admin.rpc("refund_job", { p_job: job.id });
-    return json({ error: `${msg} Your credits were refunded.` }, 502);
+    await deleteInputs(job);
+    return json({ error: `${msg} Your credits were refunded.` }, status);
+  };
+
+  // Uploads live in a private bucket: hand Higgsfield short-lived signed URLs.
+  let input;
+  try {
+    const sign = (u: string) => (inputPath(u) ? signInput(inputPath(u)!) : Promise.resolve(u));
+    input = { video_url: await sign(video_url), image_urls: await Promise.all(image_urls.map(sign)), prompt, resolution };
+  } catch (e) {
+    console.error("signing failed", e);
+    return fail("The generation service is unavailable right now. Please try again later.", 502);
+  }
+
+  const endpoint = `higgsfield/genjutsu/${workflow}/v1.0`;
+  const hook = `${Deno.env.get("SUPABASE_URL")}/functions/v1/hf-webhook?secret=${Deno.env.get("WEBHOOK_SECRET")}`;
+  let r: Response | null = null, sub: Record<string, unknown> = {};
+  // The Idempotency-Key makes one retry after a network error safe (no double render).
+  for (let attempt = 0; attempt < 2 && !r; attempt++) {
+    try {
+      r = await fetch(`${HF_BASE}/${endpoint}?hf_webhook=${encodeURIComponent(hook)}`, {
+        method: "POST", headers: hfHeaders({ "Idempotency-Key": job.id }), body: JSON.stringify(input),
+      });
+      sub = await r.json().catch(() => ({}));
+    } catch (e) { console.error("higgsfield submit threw", e); }
+  }
+  if (!r || !r.ok || !sub.request_id) {
+    console.error("higgsfield submit failed", r?.status, JSON.stringify(sub));
+    // 4xx other than auth usually means bad input the user can fix; everything else is on us.
+    return fail(r?.status === 422 || r?.status === 400
+      ? "The video or photos weren't accepted. Check the video is 4–30s MP4 and try again."
+      : "The generation service is unavailable right now. Please try again later.", 502);
   }
 
   const { data: saved } = await admin.from("jobs")

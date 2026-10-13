@@ -4,7 +4,7 @@ Viral AI video trends made with Higgsfield's **Genjutsu**. Each trend gets its o
 scene locked in, so users only add the photos. `/custom/` lets users bring their own video, up to 8 photos and a prompt.
 
 ## Add a new trend
-1. Upload the clip and a poster frame to Supabase storage `inputs/presets/<slug>.mp4` / `.jpg` (public bucket).
+1. Upload the clip and a poster frame to Supabase storage bucket `presets` as `<slug>.mp4` (public; the `inputs` bucket is private).
 2. Add an entry to `site/trends.json` (copy `white-chicks`: slots, prompt, duration, SEO texts, steps, FAQ).
 3. Optional: a 1200×630 share image at `docs/trends/<slug>/og.jpg` (falls back to the poster).
 4. `python3 site/build.py` → regenerates home, trend pages, custom, sitemap. Commit + push.

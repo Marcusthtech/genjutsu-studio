@@ -10,3 +10,6 @@ verify_jwt = false
 
 [functions.hf-webhook]
 verify_jwt = false
+
+[functions.paypal-webhook]
+verify_jwt = false

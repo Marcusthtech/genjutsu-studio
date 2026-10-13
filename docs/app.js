@@ -27,6 +27,7 @@ const state = {
   video: null, duration: 0,
   images: T ? T.slots.map(() => null) : [], // trend: fixed slots (File|null); custom: File[]
   user: null, credits: 0, jobs: [], pendingGenerate: false, pack: C.PACKS[1].id,
+  started: false, // this exact set of inputs was already sent (guards against paying twice)
 };
 
 // ---------------- helpers ----------------
@@ -53,6 +54,38 @@ const demoStore = {
   set(v) { try { localStorage.setItem("gj-demo", JSON.stringify(v)); } catch {} },
 };
 
+// ---------------- draft (survives the sign-in link opening a fresh page) ----------------
+// Photos (and a custom video) are saved in IndexedDB before sign-in and restored on return.
+const draftDB = () => new Promise((res, rej) => {
+  const r = indexedDB.open("gj", 1);
+  r.onupgradeneeded = () => r.result.createObjectStore("drafts");
+  r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+});
+async function draftOp(mode, fn) {
+  try {
+    const db = await draftDB();
+    return await new Promise((res, rej) => {
+      const tx = db.transaction("drafts", mode); const req = fn(tx.objectStore("drafts"));
+      tx.oncomplete = () => res(req?.result); tx.onerror = () => rej(tx.error);
+    });
+  } catch { return undefined; }
+}
+const saveDraft = () => draftOp("readwrite", (st) => st.put({
+  at: Date.now(), res: state.res, mode: state.mode, images: state.images,
+  video: state.video instanceof File ? state.video : null, prompt: $("prompt")?.value || "",
+}, location.pathname));
+async function restoreDraft() {
+  const d = await draftOp("readonly", (st) => st.get(location.pathname));
+  if (!d) return;
+  draftOp("readwrite", (st) => st.delete(location.pathname));
+  if (Date.now() - d.at > 2 * 3600 * 1000) return;
+  if (T && d.images?.length === state.images.length) state.images = d.images;
+  if (!T) { state.images = d.images || []; if (d.video) setVideo(d.video); if ($("prompt")) $("prompt").value = d.prompt; }
+  selectMode(d.mode || state.mode); selectRes(d.res || state.res);
+  renderThumbs(); refresh();
+  if (photos().length) toast("Your photos are back. Hit Generate when you're ready.", 5000);
+}
+
 // ---------------- auth ----------------
 async function initAuth() {
   if (DEMO) {
@@ -74,9 +107,10 @@ async function setUser(user) {
   $("signout-btn").hidden = !user;
   $("credits-pill").hidden = !user;
   if (!user) { state.jobs = []; renderJobs(); refresh(); return; }
+  const resume = state.pendingGenerate; state.pendingGenerate = false;
   $("signin-modal").open && $("signin-modal").close();
   await Promise.all([loadCredits(), loadJobs()]);
-  if (state.pendingGenerate) { state.pendingGenerate = false; generate(); }
+  if (resume) generate();
 }
 async function loadCredits() {
   if (DEMO) state.credits = demoStore.get().credits;
@@ -97,6 +131,21 @@ function openSignin() {
   $("signin-step1").hidden = false; $("signin-step2").hidden = true; $("signin-err").textContent = "";
   $("signin-modal").showModal(); $("email").focus();
 }
+// Closing the dialog without signing in cancels the "sign in & generate" intent.
+on("signin-modal", "close", () => { if (!state.user) state.pendingGenerate = false; });
+// The emailed code signs in on this page, so photos already added are kept (the link opens a new page).
+on("verify-code", "click", async () => {
+  const token = $("otp").value.replace(/\D/g, "");
+  if (token.length < 6) return ($("signin-err").textContent = "Enter the code from the email.");
+  $("verify-code").disabled = true; $("signin-err").textContent = "";
+  try {
+    const { error } = await sb.auth.verifyOtp({ email: $("sent-to").textContent, token, type: "email" });
+    if (error) throw error;
+  } catch (e) { $("signin-err").textContent = /expired|invalid/i.test(e.message) ? "That code is wrong or expired." : e.message; }
+  finally { $("verify-code").disabled = false; }
+});
+on("otp", "keydown", (e) => { if (e.key === "Enter") $("verify-code").click(); });
+on("email", "keydown", (e) => { if (e.key === "Enter") $("send-link").click(); });
 on("send-link", "click", async () => {
   const email = $("email").value.trim();
   if (!/^\S+@\S+\.\S+$/.test(email)) return ($("signin-err").textContent = "Enter a valid email.");
@@ -112,6 +161,8 @@ on("send-link", "click", async () => {
     if (error) throw error;
     $("sent-to").textContent = email;
     $("signin-step1").hidden = true; $("signin-step2").hidden = false;
+    $("step2-code").hidden = !C.EMAIL_CODE; $("step2-link").hidden = !!C.EMAIL_CODE;
+    if (C.EMAIL_CODE) { $("otp").value = ""; $("otp").focus(); }
   } catch (e) { $("signin-err").textContent = e.message; }
   finally { $("send-link").disabled = false; }
 });
@@ -132,6 +183,7 @@ function showVideo(src, onReady) {
 }
 function setVideo(file) {
   if (!file || T) return;
+  state.started = false;
   if (file.type !== "video/mp4") return toast("Please use an MP4 video.");
   showVideo(URL.createObjectURL(file), () => { state.video = file; });
 }
@@ -146,10 +198,12 @@ on("video-input", "change", (e) => setVideo(e.target.files[0]));
 on("video-clear", "click", (e) => { e.preventDefault(); clearVideo(); });
 
 function selectMode(mode) {
+  state.started = false;
   document.querySelectorAll(".mode").forEach((x) => x.classList.toggle("active", x.dataset.mode === mode));
   state.mode = mode;
 }
 function selectRes(res) {
+  state.started = false;
   document.querySelectorAll("#res-seg button").forEach((x) => x.classList.toggle("active", x.dataset.res === res));
   state.res = res;
 }
@@ -167,7 +221,7 @@ function addImages(files, slot) {
       state.images.push(f);
     }
   }
-  renderThumbs(); refresh();
+  state.started = false; renderThumbs(); refresh();
 }
 let pickSlot;
 function pickImage(slot) { pickSlot = slot; $("image-input").multiple = slot === undefined; $("image-input").click(); }
@@ -187,16 +241,19 @@ function renderThumbs() {
       if (ex) d.querySelector(".slot-example").src = ex;
       d.querySelector(".slot-label").textContent = T.slots[i].label;
       d.querySelector(".slot-hint").textContent = T.slots[i].hint || "";
+      d.tabIndex = 0; d.setAttribute("role", "button");
+      d.setAttribute("aria-label", `Add photo: ${T.slots[i].label}`);
       d.onclick = (e) => { e.stopPropagation(); pickImage(i); };
+      d.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickImage(i); } };
     } else {
       d.className = "thumb";
-      d.innerHTML = `<img alt="" /><button class="x" aria-label="Remove">×</button>`;
+      d.innerHTML = `<img alt="" /><button class="x" aria-label="Remove photo">×</button>`;
       d.querySelector("img").src = URL.createObjectURL(f);
       if (T) { const l = document.createElement("span"); l.className = "slot-tag"; l.textContent = T.slots[i].label; d.appendChild(l); }
       d.querySelector("button").onclick = (e) => {
         e.stopPropagation();
         if (T) state.images[i] = null; else state.images.splice(i, 1);
-        renderThumbs(); refresh();
+        state.started = false; renderThumbs(); refresh();
       };
     }
     box.appendChild(d);
@@ -208,6 +265,10 @@ function renderThumbs() {
   }
 }
 on("image-drop", "click", () => { if (!T && !state.images.length) pickImage(); });
+if (HAS_STUDIO && !T) { // custom page: the empty photo zone is a click target too
+  const z = $("image-drop"); z.tabIndex = 0; z.setAttribute("role", "button"); z.setAttribute("aria-label", "Add reference photos");
+  z.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target === z && !state.images.length) { e.preventDefault(); pickImage(); } });
+}
 on("image-input", "change", (e) => { addImages([...e.target.files], pickSlot); pickSlot = undefined; e.target.value = ""; });
 
 if (HAS_STUDIO) {
@@ -246,7 +307,8 @@ function refresh() {
   btn.disabled = !ready;
   btn.textContent = !ready
     ? (!state.video ? (T ? "Loading scene…" : "Upload a video to start") : T ? `Add ${need - have} more photo${need - have > 1 ? "s" : ""}` : "Add a reference photo")
-    : !state.user ? "Sign in & generate" : state.credits < cost ? "Buy credits & generate" : `Generate · ${cost.toLocaleString()} credits`;
+    : !state.user ? "Sign in & generate" : state.credits < cost ? "Buy credits & generate"
+    : state.started ? `Started ✓ · Generate again (${cost.toLocaleString()} credits)` : `Generate · ${cost.toLocaleString()} credits`;
 }
 
 // ---------------- generate ----------------
@@ -258,12 +320,16 @@ async function upload(file) {
   if (error) throw new Error(`Upload failed: ${error.message}`);
   return sb.storage.from("inputs").getPublicUrl(path).data.publicUrl;
 }
+let busy = false;
 async function generate() {
-  if (!HAS_STUDIO || !state.video || !photos().length) return;
-  if (!state.user) { state.pendingGenerate = true; return openSignin(); }
+  if (!HAS_STUDIO || !state.video || !photos().length || busy) return;
+  if (!state.user) { state.pendingGenerate = true; saveDraft(); return openSignin(); }
   const cost = estimate();
   if (state.credits < cost) { state.pendingGenerate = true; return openBuy(`This video costs about ${cost.toLocaleString()} credits. You have ${state.credits.toLocaleString()}.`); }
 
+  if (state.started && !confirm(`You already started this exact video. Make it again for ${cost.toLocaleString()} credits?`)) return;
+
+  busy = true;
   const btn = $("generate-btn"); btn.disabled = true; btn.textContent = "Uploading…";
   const trend = T?.slug || "custom";
   try {
@@ -284,13 +350,14 @@ async function generate() {
         video_url, image_urls, duration: state.duration, ...(MOCK ? { mock: MOCK } : {}),
       }));
     }
+    state.started = true;
     state.jobs.unshift(job); renderJobs(); await loadCredits();
     toast("Generating! You can leave this page — your video will be waiting here.");
     $("history").scrollIntoView({ behavior: "smooth" });
     poll();
   } catch (e) {
     if (e.status === 402) { await loadCredits(); openBuy(e.message); } else toast(e.message, 6000);
-  } finally { refresh(); }
+  } finally { busy = false; refresh(); }
 }
 
 // ---------------- jobs ----------------
@@ -302,13 +369,17 @@ async function loadJobs() {
   }
   renderJobs(); poll();
 }
-let pollTimer = null;
+let pollTimer = null, pollErrors = 0;
+const GIVE_UP_MS = 45 * 60 * 1000; // stop polling a job this old; it shows "taking longer" instead
+const age = (j) => Date.now() - new Date(j.created_at).getTime();
 function poll() {
   clearTimeout(pollTimer);
-  const open = state.jobs.filter((j) => !TERMINAL.has(j.status));
+  const open = state.jobs.filter((j) => !TERMINAL.has(j.status) && age(j) < GIVE_UP_MS);
   if (!open.length) return;
+  // 5s for the first 3 minutes, then 15s; back off further while the API errors.
+  const base = open.some((j) => age(j) < 3 * 60 * 1000) ? 5000 : 15000;
   pollTimer = setTimeout(async () => {
-    let changed = false;
+    let changed = false, errored = false;
     for (const j of open) {
       let next = j;
       if (DEMO) {
@@ -316,51 +387,87 @@ function poll() {
         else next = { ...j, status: "in_progress" };
         const d = demoStore.get(); d.jobs = d.jobs.map((x) => (x.id === j.id ? next : x)); demoStore.set(d);
       } else {
-        try { next = (await callFn("jobs", { job_id: j.id })).job; } catch {}
+        try { next = (await callFn("jobs", { job_id: j.id })).job; } catch { errored = true; }
       }
       if (next.status !== j.status) changed = true;
       Object.assign(j, next);
     }
+    pollErrors = errored ? pollErrors + 1 : 0;
     renderJobs();
     if (changed) loadCredits(); // refunds
     poll();
-  }, 5000);
+  }, base * Math.min(8, 2 ** pollErrors));
 }
 const LABEL = { submitting: "Starting", queued: "In queue", in_progress: "Rendering", completed: "Ready",
   failed: "Failed · refunded", nsfw: "Blocked · refunded", canceled: "Canceled · refunded" };
+// Cards are keyed by job and only rebuilt when their state changes, so a video being watched keeps playing.
+const jobEls = new Map();
+const jobKey = (j) => `${j.status}|${j.output_url || ""}|${j.error || ""}|${!TERMINAL.has(j.status) && age(j) >= GIVE_UP_MS}`;
+function jobCard(j) {
+  const el = document.createElement("div"); el.className = "job";
+  const when = new Date(j.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+  const name = window.TREND_NAMES?.[j.trend] || (j.workflow === "object-swap" ? "Object swap" : "Custom");
+  el.innerHTML = `<div class="job-head"><span class="job-meta"></span><span class="status"></span></div>`;
+  el.querySelector(".job-meta").textContent = `${name} · ${j.resolution} · ${when}`;
+  const st = el.querySelector(".status");
+  st.textContent = LABEL[j.status] || "Processing";
+  if (LABEL[j.status]) st.classList.add(j.status);
+  if (j.status === "completed" && j.output_url) {
+    el.insertAdjacentHTML("beforeend", `<video controls playsinline preload="metadata"></video>
+      <div class="job-actions"><a class="btn" href="#">Download</a></div>`);
+    el.querySelector("video").src = j.output_url;
+    const a = el.querySelector("a"); a.href = j.output_url;
+    a.onclick = (e) => { e.preventDefault(); download(j.output_url, `genjutsu-${j.trend || "video"}-${j.id.slice(0, 8)}.mp4`, a); };
+  } else if (!TERMINAL.has(j.status)) {
+    const late = age(j) >= GIVE_UP_MS;
+    el.insertAdjacentHTML("beforeend", late
+      ? `<div class="job-meta">This is taking longer than usual. Refresh the page later to check again. If it fails, your credits are refunded automatically.</div>`
+      : `<div class="progress"><i></i></div><div class="job-meta">Usually takes a few minutes. Safe to refresh or close.</div>`);
+  } else if (j.error) {
+    const p = document.createElement("p"); p.className = "err"; p.textContent = j.error; el.appendChild(p);
+  }
+  el._key = jobKey(j);
+  return el;
+}
 function renderJobs() {
   $("history").hidden = !state.jobs.length;
-  const box = $("jobs"); box.innerHTML = "";
+  const box = $("jobs");
+  const ids = new Set(state.jobs.map((j) => j.id));
+  for (const [id, el] of jobEls) if (!ids.has(id)) { el.remove(); jobEls.delete(id); }
+  let prev = null;
   for (const j of state.jobs) {
-    const el = document.createElement("div"); el.className = "job";
-    const when = new Date(j.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-    const name = window.TREND_NAMES?.[j.trend] || (j.workflow === "object-swap" ? "Object swap" : "Custom");
-    el.innerHTML = `
-      <div class="job-head"><span class="job-meta"></span><span class="status ${j.status}">${LABEL[j.status] || j.status}</span></div>`;
-    el.querySelector(".job-meta").textContent = `${name} · ${j.resolution} · ${when}`;
-    if (j.status === "completed" && j.output_url) {
-      el.insertAdjacentHTML("beforeend", `<video controls playsinline preload="metadata"></video>
-        <div class="job-actions"><a class="btn" target="_blank" rel="noopener" download>Download</a></div>`);
-      el.querySelector("video").src = j.output_url;
-      el.querySelector("a").href = j.output_url;
-    } else if (!TERMINAL.has(j.status)) {
-      el.insertAdjacentHTML("beforeend", `<div class="progress"><i></i></div><div class="job-meta">Usually takes a few minutes. Safe to refresh or close.</div>`);
-    } else if (j.error) {
-      const p = document.createElement("p"); p.className = "err"; p.textContent = j.error; el.appendChild(p);
-    }
-    box.appendChild(el);
+    let el = jobEls.get(j.id);
+    if (el && el._key !== jobKey(j)) { const fresh = jobCard(j); el.replaceWith(fresh); el = fresh; jobEls.set(j.id, el); }
+    if (!el) { el = jobCard(j); jobEls.set(j.id, el); }
+    const want = prev ? prev.nextSibling : box.firstChild;
+    if (want !== el) box.insertBefore(el, want); // only new cards move; existing ones stay put
+    prev = el;
   }
+}
+// Cross-origin files ignore <a download>, so fetch the bytes; if CORS blocks that, open it instead.
+async function download(url, name, a) {
+  const label = a.textContent; a.textContent = "Downloading…";
+  try {
+    const r = await fetch(url); if (!r.ok) throw new Error();
+    const href = URL.createObjectURL(await r.blob());
+    const tmp = Object.assign(document.createElement("a"), { href, download: name });
+    document.body.appendChild(tmp); tmp.click(); tmp.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 60000);
+  } catch { window.open(url, "_blank", "noopener"); }
+  finally { a.textContent = label; }
 }
 
 // ---------------- buy credits ----------------
 on("credits-pill", "click", () => openBuy());
 // "Just this video" pays exactly the missing credits, so nothing is left over. Packs are optional.
-const MIN_EXACT = 50;
+const MIN_EXACT = 200; // $2: below that PayPal's fixed fee eats the payment
+
 function packList() {
   const short = estimate() - state.credits;
   if (short <= 0) return C.PACKS;
   const credits = Math.max(short, MIN_EXACT);
-  return [{ id: "exact", label: "Just this video", tag: "No leftovers", credits, usd: (credits / 100).toFixed(2) }, ...C.PACKS];
+  const tag = short >= MIN_EXACT ? "No leftovers" : "Minimum $2";
+  return [{ id: "exact", label: "Just this video", tag, credits, usd: (credits / 100).toFixed(2) }, ...C.PACKS];
 }
 function openBuy(reason) {
   if (estimate() - state.credits > 0) state.pack = "exact";
@@ -427,7 +534,7 @@ if (T) {
   // Preview plays from GitHub Pages; the API gets the storage URL.
   showVideo(T.preview_url || T.video_url, () => { state.video = { url: T.video_url }; });
 }
-if (HAS_STUDIO) { selectMode(state.mode); selectRes(state.res); renderThumbs(); }
+if (HAS_STUDIO) { selectMode(state.mode); selectRes(state.res); renderThumbs(); restoreDraft(); }
 refresh();
 initAuth();
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the static site in docs/ from site/trends.json.
 
-Add a trend: upload its clip + poster to Supabase storage under inputs/presets/,
+Add a trend: upload its clip + poster to Supabase storage in the public "presets" bucket,
 add an entry to trends.json, drop a 1200x630 og.jpg in docs/trends/<slug>/
 (optional, falls back to the poster), then run:  python3 site/build.py
 """
@@ -139,11 +139,19 @@ def footer(root, app=True, page=None):
     <h3>Sign in</h3>
     <p class="muted">We'll email you a sign-in link. Your credits and videos are saved to your email.</p>
     <div id="signin-step1">
+      <label class="field-label" for="email">Email</label>
       <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
-      <button id="send-link" class="btn primary wide">Email me a link</button>
+      <button id="send-link" class="btn primary wide">Email me a sign-in link</button>
     </div>
     <div id="signin-step2" hidden>
-      <p>We sent a sign-in link to <b id="sent-to"></b>. Open it on this device, and you'll be signed in automatically.</p>
+      <div id="step2-link">
+        <p>We sent a sign-in link to <b id="sent-to"></b>. Open it in this browser and you'll come right back here. Photos you added are saved.</p>
+      </div>
+      <div id="step2-code" hidden>
+        <label class="field-label" for="otp">Code from the email</label>
+        <input id="otp" class="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" />
+        <button id="verify-code" class="btn primary wide">Sign in</button>
+      </div>
       <p class="muted">Can't find it? Check your spam folder.</p>
     </div>
     <p class="err" id="signin-err"></p>
@@ -186,7 +194,7 @@ RES_ROW = """      <div class="row">
       <div class="breakdown" id="breakdown" hidden></div>
 
       <button id="generate-btn" class="btn primary big" disabled>Generate video</button>
-      <p class="fine">Failed or moderated generations are refunded automatically. Results stay available for 7 days, so download them.</p>
+      <p class="fine">Failed or moderated generations are refunded automatically. Download your video to keep a copy.</p>
 """
 
 
@@ -204,7 +212,7 @@ def studio_trend(t, root):
           <video src="{rel(root, rs['video'])}" poster="{rel(root, rs['poster'])}" muted loop playsinline autoplay preload="metadata"></video>
           <span class="eq-tag">Example result</span>
           <button type="button" class="eq-sound" aria-label="Play with sound"
-            onclick="const v=this.previousElementSibling.previousElementSibling;v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊'">🔇</button>
+            onclick="const v=this.previousElementSibling.previousElementSibling;v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊';this.ariaLabel=v.muted?'Play with sound':'Mute'">🔇</button>
         </figure>
       </div>
 """ if rs else ""
@@ -218,7 +226,7 @@ def studio_trend(t, root):
           <video id="video-preview" muted loop playsinline autoplay hidden></video>
           <span class="lock-tag">🔒 {esc(t['short'])}</span>
           <button type="button" class="eq-sound" aria-label="Play with sound"
-            onclick="const v=document.getElementById('video-preview');v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊'">🔇</button>
+            onclick="const v=document.getElementById('video-preview');v.muted=!v.muted;v.play();this.textContent=v.muted?'🔇':'🔊';this.ariaLabel=v.muted?'Play with sound':'Mute'">🔇</button>
         </div>
         <span class="eq-op eq-plus">+</span>
         <div class="drop images" id="image-drop">
@@ -366,7 +374,7 @@ home_faq = [
     ("How much does it cost?", "You pay per second of video, with no subscription. At 480p it's about 16 credits per second plus 100 per video (100 credits = $1). Every page shows the exact price before you generate."),
     ("What if the generation fails?", "Your credits are refunded automatically, including when the content is blocked by moderation."),
     ("Can I close the page while it's generating?", "Yes. Your video keeps rendering. Sign in again and you'll find it under \"Your videos\"."),
-    ("Do credits expire?", "Credits stay on your account for 12 months."),
+    ("Do credits expire?", "No. Credits stay on your account until you use them."),
 ]
 item_list = {
     "@context": "https://schema.org", "@type": "ItemList", "name": "Genjutsu AI video trends",

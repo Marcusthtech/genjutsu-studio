@@ -1,6 +1,7 @@
 // POST {action:"create", pack_id} -> {order_id}
 // POST {action:"capture", order_id} -> {credits_added, balance}
 import { admin, getUser, json, serve } from "../_shared/common.ts";
+import { PP_BASE, ppToken } from "../_shared/paypal.ts";
 
 // Keep in sync with PACKS in docs/config.js (server is authoritative).
 const PACKS: Record<string, { usd: string; credits: number }> = {
@@ -9,20 +10,6 @@ const PACKS: Record<string, { usd: string; credits: number }> = {
   studio: { usd: "40.00", credits: 4500 },
 };
 
-const PP_BASE = Deno.env.get("PAYPAL_ENV") === "live"
-  ? "https://api-m.paypal.com"
-  : "https://api-m.sandbox.paypal.com";
-
-async function ppToken(): Promise<string> {
-  const basic = btoa(`${Deno.env.get("PAYPAL_CLIENT_ID")}:${Deno.env.get("PAYPAL_CLIENT_SECRET")}`);
-  const r = await fetch(`${PP_BASE}/v1/oauth2/token`, {
-    method: "POST",
-    headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/x-www-form-urlencoded" },
-    body: "grant_type=client_credentials",
-  });
-  if (!r.ok) throw new Error(`PayPal auth failed: ${r.status}`);
-  return (await r.json()).access_token;
-}
 
 serve(async (req) => {
   const user = await getUser(req);
@@ -37,7 +24,7 @@ serve(async (req) => {
       // "exact" = pay for just the credits missing for one video (1 credit = $0.01), no leftovers.
       const n = Math.floor(Number(body.credits));
       const pack = body.pack_id === "exact"
-        ? (n >= 50 && n <= 5000 ? { usd: (n / 100).toFixed(2), credits: n } : null)
+        ? (n >= 200 && n <= 5000 ? { usd: (n / 100).toFixed(2), credits: n } : null)
         : PACKS[body.pack_id];
       if (!pack) return json({ error: "Unknown pack" }, 400);
       const r = await fetch(`${PP_BASE}/v2/checkout/orders`, {
@@ -54,7 +41,10 @@ serve(async (req) => {
         }),
       });
       const order = await r.json();
-      if (!r.ok) return json({ error: "Could not create PayPal order", detail: order }, 502);
+      if (!r.ok) {
+        console.error("paypal create failed", r.status, JSON.stringify(order));
+        return json({ error: "Could not start the PayPal payment. Please try again." }, 502);
+      }
       await admin.from("payments").insert({
         order_id: order.id, user_id: user.id, pack_id: body.pack_id, usd: pack.usd, credits: pack.credits,
       });
@@ -75,7 +65,10 @@ serve(async (req) => {
         const unit = cap?.purchase_units?.[0]?.payments?.captures?.[0];
         const paidOk = unit?.status === "COMPLETED" &&
           unit.amount?.currency_code === "USD" && Number(unit.amount.value) === Number(pay.usd);
-        if (!paidOk && !already) return json({ error: "Payment was not completed", detail: cap }, 402);
+        if (!paidOk && !already) {
+          console.error("paypal capture not completed", r.status, JSON.stringify(cap));
+          return json({ error: "The payment was not completed. You were not charged." }, 402);
+        }
         await admin.rpc("complete_payment", { p_order_id: pay.order_id });
       }
       const { data: prof } = await admin.from("profiles").select("credits").eq("user_id", user.id).single();
@@ -84,6 +77,7 @@ serve(async (req) => {
 
     return json({ error: "Unknown action" }, 400);
   } catch (e) {
-    return json({ error: String((e as Error)?.message ?? e) }, 500);
+    console.error("paypal error", e);
+    return json({ error: "Payment service error. Please try again." }, 500);
   }
 });
