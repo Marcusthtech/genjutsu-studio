@@ -587,6 +587,56 @@
           ]
         ]
       }
+    },
+    {
+      "slug": "qa-4s",
+      "hidden": true,
+      "name": "QA 4-second test",
+      "short": "QA 4s test",
+      "card_blurb": "Internal test clip.",
+      "video_url": "https://tbljgxkbocunzoqvkoeu.supabase.co/storage/v1/object/public/inputs/presets/qa-4s.mp4",
+      "poster": "trends/qa-4s/poster.jpg",
+      "preview_url": "trends/qa-4s/preview.mp4",
+      "duration": 4.0,
+      "mode": "motion-transfer",
+      "resolution": "480p",
+      "prompt": "Replace both characters with the uploaded pictures",
+      "slots": [
+        {
+          "label": "Person on the left",
+          "hint": "Passenger seat",
+          "example": "assets/examples/white-chicks-b.jpg"
+        },
+        {
+          "label": "Person on the right",
+          "hint": "Driver",
+          "example": "assets/examples/white-chicks-a.jpg"
+        }
+      ],
+      "published": "2026-10-13",
+      "seo": {
+        "title": "QA 4-second test (internal)",
+        "description": "Internal test page.",
+        "h1": "QA 4-second test",
+        "lead": "Internal test page: the first 4 seconds of the White Chicks scene, the cheapest possible real render. Add <code>?mock=ok</code> or <code>?mock=fail</code> to the URL for a free simulated run (testers only).",
+        "about_html": "<p>Not a public trend.</p>",
+        "steps": [
+          [
+            "Add two photos",
+            "Any two faces."
+          ],
+          [
+            "Generate",
+            "Check the job, the credits and the result."
+          ]
+        ],
+        "faq": [
+          [
+            "Is this public?",
+            "No. It is hidden from the gallery, the sitemap and search engines."
+          ]
+        ]
+      }
     }
   ]
 }

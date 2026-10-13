@@ -67,8 +67,9 @@ export function usdToCredits(usd: number): number {
 }
 
 /** Fetch status from Higgsfield, persist it on the job, refund on failure. */
-export async function syncJob(job: { id: string; hf_request_id: string | null; status: string }) {
+export async function syncJob(job: { id: string; hf_request_id: string | null; status: string; created_at?: string; video_url?: string }) {
   if (!job.hf_request_id || TERMINAL.has(job.status)) return job;
+  if (job.hf_request_id.startsWith("mock:")) return syncMockJob(job);
   const r = await fetch(`${HF_BASE}/requests/${job.hf_request_id}/status`, { headers: hfHeaders() });
   if (!r.ok) return job;
   const s = await r.json();
@@ -78,5 +79,19 @@ export async function syncJob(job: { id: string; hf_request_id: string | null; s
   if (s.status === "nsfw") patch.error = "The content was flagged by moderation. Your credits were refunded.";
   const { data } = await admin.from("jobs").update(patch).eq("id", job.id).select().single();
   if (["failed", "nsfw", "canceled"].includes(s.status)) await admin.rpc("refund_job", { p_job: job.id });
+  return data ?? job;
+}
+
+/** Test-mode jobs: queued -> in_progress -> completed/failed over ~20s, no Higgsfield call. */
+async function syncMockJob(job: { id: string; hf_request_id: string | null; status: string; created_at?: string; video_url?: string }) {
+  const age = Date.now() - new Date(job.created_at ?? Date.now()).getTime();
+  const fail = job.hf_request_id!.startsWith("mock:fail");
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (age < 8000) patch.status = "queued";
+  else if (age < 20000) patch.status = "in_progress";
+  else if (fail) Object.assign(patch, { status: "failed", error: "Test mode: simulated failure. Your credits were refunded." });
+  else Object.assign(patch, { status: "completed", output_url: job.video_url });
+  const { data } = await admin.from("jobs").update(patch).eq("id", job.id).select().single();
+  if (patch.status === "failed") await admin.rpc("refund_job", { p_job: job.id });
   return data ?? job;
 }

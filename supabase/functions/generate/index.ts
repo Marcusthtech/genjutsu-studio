@@ -29,12 +29,20 @@ serve(async (req) => {
     return json({ error: "Add 1–8 reference images." }, 400);
   }
 
+  // Test mode: allowlisted testers can fake the Higgsfield call (mock "ok" or "fail").
+  // Credits are still charged and refunded so the whole money path is exercised.
+  const mock = b.mock === "ok" || b.mock === "fail" ? b.mock : null;
+  if (mock) {
+    const testers = (Deno.env.get("TEST_EMAILS") ?? "").toLowerCase().split(",").map((s) => s.trim()).filter(Boolean);
+    if (!testers.includes(String(user.email ?? "").toLowerCase())) return json({ error: "Test mode is not enabled for this account." }, 403);
+  }
+
   const input = { video_url, image_urls, prompt, resolution };
   const endpoint = `higgsfield/genjutsu/${workflow}/v1.0`;
 
   // Price: Higgsfield's own estimate; fall back to the published per-second rate.
   let usd: number | null = null;
-  try {
+  if (!mock) try {
     const est = await fetch(`${HF_BASE}/estimate/${endpoint}`, {
       method: "POST", headers: hfHeaders(), body: JSON.stringify(input),
     });
@@ -56,6 +64,13 @@ serve(async (req) => {
   if (error || !job) {
     await admin.rpc("spend_credits", { p_user: user.id, p_amount: -cost }); // give the hold back
     return json({ error: "Could not create job." }, 500);
+  }
+
+  if (mock) {
+    const { data: saved } = await admin.from("jobs")
+      .update({ hf_request_id: `mock:${mock}:${job.id}`, status: "queued", updated_at: new Date().toISOString() })
+      .eq("id", job.id).select().single();
+    return json({ job: saved });
   }
 
   const hook = `${Deno.env.get("SUPABASE_URL")}/functions/v1/hf-webhook?secret=${Deno.env.get("WEBHOOK_SECRET")}`;

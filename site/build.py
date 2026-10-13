@@ -15,7 +15,9 @@ SITE = ROOT / "site"
 DOCS = ROOT / "docs"
 DATA = json.loads((SITE / "trends.json").read_text())
 BASE = DATA["base_url"]
-TRENDS = DATA["trends"]
+ALL_TRENDS = DATA["trends"]
+# hidden trends (e.g. the 4s QA clip) get a page but stay out of the gallery, links and sitemap
+TRENDS = [t for t in ALL_TRENDS if not t.get("hidden")]
 TODAY = date.today().isoformat()
 CREDITS_PER_SEC_DEFAULT = 15.9  # 480p; keep in sync with docs/config.js
 FEE_CREDITS = 100
@@ -69,7 +71,7 @@ def og_image(path, trend=None):
     return f"{BASE}og.jpg"
 
 
-def head(*, path, title, description, og_title=None, og_type="website", image, extra_ld=""):
+def head(*, path, title, description, og_title=None, og_type="website", image, extra_ld="", noindex=False):
     root = "../" * path.count("/")
     return f"""<!doctype html>
 <html lang="en">
@@ -77,7 +79,7 @@ def head(*, path, title, description, og_title=None, og_type="website", image, e
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{esc(title)}</title>
-  <meta name="description" content="{esc(description)}" />
+  <meta name="description" content="{esc(description)}" />{'\n  <meta name="robots" content="noindex,nofollow" />' if noindex else ''}
   <link rel="canonical" href="{BASE}{path}" />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta property="og:type" content="{og_type}" />
@@ -130,7 +132,7 @@ def footer(root, app=True, page=None):
 """
     if not app:
         return out + "</body>\n</html>\n"
-    names = {t["slug"]: t["short"] for t in TRENDS}
+    names = {t["slug"]: t["short"] for t in ALL_TRENDS}
     return out + f"""
   <dialog id="signin-modal" class="modal">
     <form method="dialog" class="modal-x"><button aria-label="Close">×</button></form>
@@ -289,7 +291,7 @@ def price_text(t):
 
 
 # ---------------- trend pages ----------------
-for t in TRENDS:
+for t in ALL_TRENDS:
     path = f"trends/{t['slug']}/"
     root = "../../"
     s = t["seo"]
@@ -313,7 +315,7 @@ for t in TRENDS:
     }
     steps = "\n".join(f"        <li><b>{esc(n)}.</b> {esc(x)}</li>" for n, x in s["steps"])
     body = head(path=path, title=s["title"], description=s["description"], og_title=s.get("og_title"),
-                image=og_image(path, t),
+                image=og_image(path, t), noindex=bool(t.get("hidden")),
                 extra_ld=ld(app_ld, howto, faq_ld(s["faq"]), breadcrumbs(("Trends", ""), (t["short"], path))))
     body += header(root)
     body += f"""

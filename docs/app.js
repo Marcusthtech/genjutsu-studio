@@ -9,6 +9,14 @@ const PAGE = window.PAGE || { kind: "home" };
 const T = PAGE.trend;
 const HAS_STUDIO = PAGE.kind === "trend" || PAGE.kind === "custom";
 const DEMO = !C.SUPABASE_URL || !C.SUPABASE_ANON_KEY;
+// Test mode (?mock=ok or ?mock=fail): the server fakes the render for allowlisted testers only.
+const MOCK = ["ok", "fail"].includes(new URLSearchParams(location.search).get("mock")) ? new URLSearchParams(location.search).get("mock") : null;
+if (MOCK && HAS_STUDIO) {
+  const b = document.createElement("div");
+  b.className = "test-banner";
+  b.textContent = `TEST MODE (${MOCK === "ok" ? "simulated success" : "simulated failure"}) · no real render, credits are charged${MOCK === "fail" ? " then refunded" : ""}`;
+  document.body.prepend(b);
+}
 const sb = DEMO ? null : createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 const TERMINAL = new Set(["completed", "failed", "nsfw", "canceled"]);
 const $ = (id) => document.getElementById(id);
@@ -272,7 +280,7 @@ async function generate() {
       ({ job } = await callFn("generate", {
         trend, workflow: state.mode, resolution: state.res,
         prompt: T ? T.prompt : $("prompt").value.trim(),
-        video_url, image_urls, duration: state.duration,
+        video_url, image_urls, duration: state.duration, ...(MOCK ? { mock: MOCK } : {}),
       }));
     }
     state.jobs.unshift(job); renderJobs(); await loadCredits();
