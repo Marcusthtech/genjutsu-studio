@@ -222,6 +222,7 @@ main > .crumbs { padding-top: 6px; }
 .price-points div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
 .price-points span { color: var(--muted); font-size: 14px; }
 @media (max-width: 640px) { .price-points { grid-template-columns: 1fr; } }
+@media (max-width: 400px) { .article table { font-size: 13px; } .article th, .article td { padding: 6px 5px; } }
 .article .lead { margin-left: 0; margin-right: 0; padding: 0; text-align: left; }
 .thumbs.slots.many { grid-template-columns: repeat(4, 1fr); }
 .slots.many .thumb { min-height: 120px; }
