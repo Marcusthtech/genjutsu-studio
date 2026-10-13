@@ -49,7 +49,7 @@ serve(async (req) => {
     if (est.ok) usd = Number((await est.json()).usd);
   } catch { /* fall through */ }
   if (!usd || !isFinite(usd)) {
-    const secs = Math.min(30, Math.max(4, Math.ceil(Number(b.duration) || 30)));
+    const secs = Math.min(30, Math.max(4, Math.ceil((Number(b.duration) || 30) - 0.05)));
     usd = FALLBACK_USD_PER_SEC[resolution] * secs;
   }
   const cost = usdToCredits(usd);

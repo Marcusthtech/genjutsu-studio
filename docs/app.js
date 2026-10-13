@@ -34,7 +34,8 @@ function toast(msg, ms = 3500) {
   const t = $("toast"); t.textContent = msg; t.hidden = false;
   clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), ms);
 }
-const clampSecs = (d) => Math.min(30, Math.max(4, Math.ceil(d)));
+// Browsers report a few ms extra (AAC priming), so ignore anything under 0.05s past a whole second.
+const clampSecs = (d) => Math.min(30, Math.max(4, Math.ceil(d - 0.05)));
 function estimate() {
   return state.duration ? Math.ceil(clampSecs(state.duration) * C.CREDITS_PER_SEC[state.res]) + (C.FEE_CREDITS || 0) : 0;
 }
