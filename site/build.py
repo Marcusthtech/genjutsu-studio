@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 DOCS = ROOT / "docs"
-DATA = json.loads((SITE / "trends.json").read_text(encoding="utf-8"))
+DATA = json.loads((SITE / "trends.json").read_text(encoding="utf-8-sig"))
 BASE = DATA["base_url"]
 ALL_TRENDS = DATA["trends"]
 # hidden trends (e.g. the 4s QA clip) get a page but stay out of the gallery, links and sitemap
