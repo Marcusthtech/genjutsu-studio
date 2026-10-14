@@ -256,7 +256,7 @@ STUDIO_CUSTOM = """    <section class="card studio" id="studio">
       </div>
 
       <div class="grid2">
-        <label class="drop" id="video-drop">
+        <label class="drop" id="video-drop" tabindex="0" role="button" aria-label="Upload a source video">
           <input type="file" id="video-input" accept="video/mp4" hidden />
           <div class="drop-empty">
             <div class="drop-icon">🎬</div>
@@ -478,7 +478,7 @@ def video_price(secs, res):
 
 pfaq = [
     ("Is there a subscription?", "No. There is no monthly plan and nothing renews. You pay once for the video you are making."),
-    ("Do I have to buy credits I won't use?", "No. At checkout, pick \"Just this video\" and you pay exactly that video's price. Packs are optional, for people who plan to make several videos."),
+    ("Do I have to buy credits I won't use?", "No. At checkout, pick \"Just this video\" and you pay exactly that video's price ($2 minimum). Packs are optional, for people who plan to make several videos."),
     ("How is the price calculated?", "By the length of the video and the resolution you pick. The exact price shows before you click Generate."),
     ("What if the video fails?", "Failed or moderated generations are refunded automatically to your balance."),
     ("Why do some apps look cheaper?", "Subscription apps advertise \"up to\" numbers based on their cheapest model and shortest clip, and you pay every month whether you use it or not. Here you pay only when you make a video, with Higgsfield Genjutsu, the model that keeps the original scene."),
@@ -491,10 +491,10 @@ pr += f"""  <main>
     <article class="article">
       <div class="crumbs"><a href="../">Trends</a> › Pricing</div>
       <h1>Pay per video. That's it.</h1>
-      <p class="lead">No subscription, no monthly credits that expire, no leftovers. You pay for the video you're making, right when you make it.</p>
+      <p class="lead">No subscription, no monthly credits that expire. You pay for the video you're making, right when you make it.</p>
       <div class="price-points">
         <div><b>🚫 No subscription</b><span>Nothing renews. No plan to cancel.</span></div>
-        <div><b>🎯 Pay for just this video</b><span>Checkout charges exactly this video's price.</span></div>
+        <div><b>🎯 Pay for just this video</b><span>Checkout charges exactly this video's price ($2 minimum).</span></div>
         <div><b>↩️ Failed = refunded</b><span>If it fails or is moderated, you get it back.</span></div>
       </div>
 

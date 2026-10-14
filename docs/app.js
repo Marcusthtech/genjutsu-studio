@@ -172,7 +172,7 @@ function showVideo(src, onReady) {
   const v = $("video-preview");
   v.src = src;
   v.onloadedmetadata = () => {
-    if (v.duration < 4) { toast("The video must be at least 4 seconds."); return clearVideo(); }
+    if (v.duration < 3.95) { toast("The video must be at least 4 seconds."); return clearVideo(); }
     if (v.duration > 30) toast("Only the first 30 seconds will be used.");
     state.duration = v.duration; onReady();
     v.hidden = false; v.play().catch(() => {});
@@ -273,7 +273,12 @@ on("image-input", "change", (e) => { addImages([...e.target.files], pickSlot); p
 
 if (HAS_STUDIO) {
   const zones = [["image-drop", (fs) => addImages(fs)]];
-  if (!T) zones.push(["video-drop", (fs) => setVideo(fs[0])]);
+  if (!T) {
+    zones.push(["video-drop", (fs) => setVideo(fs[0])]);
+    const vd = $("video-drop"); // a <label> around a hidden input isn't focusable on its own
+    vd.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target === vd) { e.preventDefault(); $("video-input").click(); } });
+    on("prompt", "input", () => { state.started = false; refresh(); }); // new prompt = new video
+  }
   for (const [zone, handler] of zones) {
     const z = $(zone);
     z.addEventListener("dragover", (e) => { e.preventDefault(); z.classList.add("over"); });
@@ -454,7 +459,7 @@ async function download(url, name, a) {
     const tmp = Object.assign(document.createElement("a"), { href, download: name });
     document.body.appendChild(tmp); tmp.click(); tmp.remove();
     setTimeout(() => URL.revokeObjectURL(href), 60000);
-  } catch { window.open(url, "_blank", "noopener"); }
+  } catch { location.href = url; } // after an await a new window would be pop-up blocked
   finally { a.textContent = label; }
 }
 
