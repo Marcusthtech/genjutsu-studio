@@ -314,7 +314,8 @@ function refresh() {
 // ---------------- generate ----------------
 on("generate-btn", "click", () => generate());
 async function upload(file) {
-  const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+  const EXT = { "video/mp4": "mp4", "video/quicktime": "mov", "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+  const ext = EXT[file.type] || (file.name.split(".").pop() || "bin").toLowerCase();
   const path = `${state.user.id}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from("inputs").upload(path, file, { contentType: file.type });
   if (error) throw new Error(`Upload failed: ${error.message}`);
@@ -521,6 +522,7 @@ async function renderPayPal() {
       createOrder: async () => (await callFn("paypal", { action: "create", pack_id: pack.id, credits: pack.credits })).order_id,
       onApprove: async ({ orderID }) => {
         const r = await callFn("paypal", { action: "capture", order_id: orderID });
+        if (r?.error) { $("buy-err").textContent = r.error; return; } // pending: credits arrive later
         onPaid(r.credits_added);
       },
       onError: (err) => { $("buy-err").textContent = err?.message || "Payment failed. You were not charged."; },

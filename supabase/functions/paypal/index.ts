@@ -60,12 +60,18 @@ serve(async (req) => {
         const r = await fetch(`${PP_BASE}/v2/checkout/orders/${pay.order_id}/capture`, {
           method: "POST", headers: { ...pp, "PayPal-Request-Id": `cap-${pay.order_id}` },
         });
-        const cap = await r.json();
-        const already = cap?.details?.[0]?.issue === "ORDER_ALREADY_CAPTURED";
+        let cap = await r.json();
+        // A retry after a lost response: re-read the order, never trust "already captured" alone.
+        if (cap?.details?.[0]?.issue === "ORDER_ALREADY_CAPTURED") {
+          cap = await fetch(`${PP_BASE}/v2/checkout/orders/${pay.order_id}`, { headers: pp }).then((x) => x.json());
+        }
         const unit = cap?.purchase_units?.[0]?.payments?.captures?.[0];
-        const paidOk = unit?.status === "COMPLETED" &&
-          unit.amount?.currency_code === "USD" && Number(unit.amount.value) === Number(pay.usd);
-        if (!paidOk && !already) {
+        const amountOk = unit?.amount?.currency_code === "USD" && Number(unit.amount.value) === Number(pay.usd);
+        if (unit?.status === "PENDING" && amountOk) {
+          // eCheck / review: the PAYMENT.CAPTURE.COMPLETED webhook adds the credits once PayPal clears it.
+          return json({ error: "PayPal is still processing this payment. Your credits will appear once it clears." }, 202);
+        }
+        if (unit?.status !== "COMPLETED" || !amountOk) {
           console.error("paypal capture not completed", r.status, JSON.stringify(cap));
           return json({ error: "The payment was not completed. You were not charged." }, 402);
         }

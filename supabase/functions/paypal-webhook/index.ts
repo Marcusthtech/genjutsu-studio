@@ -1,4 +1,5 @@
-// PayPal webhook: PAYMENT.CAPTURE.REFUNDED / PAYMENT.CAPTURE.REVERSED take the credits back.
+// PayPal webhook: PAYMENT.CAPTURE.COMPLETED adds credits for captures that were pending;
+// PAYMENT.CAPTURE.REFUNDED / REVERSED / DENIED take the credits back.
 // Every event is verified with PayPal (verify-webhook-signature) before we act on it.
 import { admin, json, serve } from "../_shared/common.ts";
 import { PP_BASE, ppToken } from "../_shared/paypal.ts";
@@ -22,11 +23,12 @@ serve(async (req) => {
   if (v?.verification_status !== "SUCCESS") return json({ error: "unverified" }, 401);
 
   const type = String(event.event_type);
-  if (type !== "PAYMENT.CAPTURE.REFUNDED" && type !== "PAYMENT.CAPTURE.REVERSED") return json({ ok: true });
+  const HANDLED = ["PAYMENT.CAPTURE.COMPLETED", "PAYMENT.CAPTURE.REFUNDED", "PAYMENT.CAPTURE.REVERSED", "PAYMENT.CAPTURE.DENIED"];
+  if (!HANDLED.includes(type)) return json({ ok: true });
 
-  // Find the capture: a reversal's resource is the capture itself; a refund links "up" to it.
+  // Find the capture: most events carry the capture itself; a refund links "up" to it.
   const res = event.resource ?? {};
-  const captureId = type === "PAYMENT.CAPTURE.REVERSED"
+  const captureId = type !== "PAYMENT.CAPTURE.REFUNDED"
     ? res.id
     : String((res.links ?? []).find((l: { rel: string }) => l.rel === "up")?.href ?? "").split("/").pop();
   if (!captureId) return json({ error: "no capture" }, 400);
@@ -34,6 +36,12 @@ serve(async (req) => {
   const orderId = cap?.supplementary_data?.related_ids?.order_id;
   const { data: pay } = await admin.from("payments").select("*").eq("order_id", orderId).maybeSingle();
   if (!pay) return json({ ok: true, note: "unknown order" });
+
+  if (type === "PAYMENT.CAPTURE.COMPLETED") { // re-read from PayPal, not from the event body
+    const ok = cap?.status === "COMPLETED" && cap?.amount?.currency_code === "USD" && Number(cap.amount.value) === Number(pay.usd);
+    if (ok) await admin.rpc("complete_payment", { p_order_id: pay.order_id }); // idempotent
+    return json({ ok: true });
+  }
 
   // How many of this order's credits should be gone now (cumulative, so retries are idempotent).
   let target = pay.credits;

@@ -17,14 +17,16 @@ serve(async (req) => {
   const video_url = String(b.video_url ?? "");
   const image_urls: string[] = Array.isArray(b.image_urls) ? b.image_urls.map(String) : [];
   const ownPrefix = `${INPUTS_PUBLIC}${user.id}/`;
+  // Exact shape of an upload (no "../" or extra path segments can sneak into another folder).
+  const own = (u: string, ext: string) => u.startsWith(ownPrefix) && new RegExp(`^[A-Za-z0-9_-]{1,64}\\.(${ext})$`, "i").test(u.slice(ownPrefix.length));
 
   if (!WORKFLOWS.includes(workflow as never)) return json({ error: "Pick a mode." }, 400);
   if (!RESOLUTIONS.includes(resolution as never)) return json({ error: "Pick a resolution." }, 400);
   const isPreset = video_url.startsWith(PRESETS_PUBLIC) && /^[a-z0-9-]+\.mp4$/.test(video_url.slice(PRESETS_PUBLIC.length));
-  if (!video_url.startsWith(ownPrefix) && !isPreset) {
+  if (!own(video_url, "mp4|mov") && !isPreset) {
     return json({ error: "Upload a source video." }, 400);
   }
-  if (image_urls.length < 1 || image_urls.length > 8 || !image_urls.every((u) => u.startsWith(ownPrefix))) {
+  if (image_urls.length < 1 || image_urls.length > 8 || !image_urls.every((u) => own(u, "jpe?g|png|webp"))) {
     return json({ error: "Add 1–8 reference images." }, 400);
   }
 
@@ -49,7 +51,7 @@ serve(async (req) => {
   if (!ok) return json({ error: "Not enough credits.", cost }, 402);
 
   const { data: job, error } = await admin.from("jobs").insert({
-    user_id: user.id, trend, workflow, resolution, prompt, video_url, image_urls, cost,
+    user_id: user.id, trend, workflow, resolution, prompt, video_url, image_urls, cost, billed_secs: billed,
   }).select().single();
   if (error || !job) {
     await admin.rpc("spend_credits", { p_user: user.id, p_amount: -cost }); // give the hold back

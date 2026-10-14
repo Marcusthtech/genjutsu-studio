@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 
-const ORIGINS = (Deno.env.get("ALLOWED_ORIGIN") ?? "*").split(",").map((s) => s.trim());
+const ORIGINS = (Deno.env.get("ALLOWED_ORIGIN") ?? "https://genjutsu-trends.com").split(",").map((s) => s.trim());
 
 function corsFor(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
@@ -114,24 +114,53 @@ export async function mp4Duration(url: string): Promise<number | null> {
     if (size < hdr) return null; // size 0 ("to end of file") never wraps a moov we can find
     if (type === "moov") {
       const moov = await range(off + hdr, off + Math.min(size, 8 * 1024 * 1024) - 1);
-      if (!moov) return null;
-      for (let j = 0; j + 8 <= moov.length;) { // children of moov
-        const m = new DataView(moov.buffer, moov.byteOffset + j);
-        const csize = m.getUint32(0);
-        if (String.fromCharCode(...moov.slice(j + 4, j + 8)) === "mvhd") {
-          const v = moov[j + 8];
-          const timescale = v === 1 ? m.getUint32(28) : m.getUint32(20);
-          const dur = v === 1 ? Number(m.getBigUint64(32)) : m.getUint32(24);
-          return timescale ? dur / timescale : null;
-        }
-        if (csize < 8) return null;
-        j += csize;
-      }
-      return null;
+      return moov ? moovDuration(moov) : null;
     }
     off += size;
   }
   return null;
+}
+
+/**
+ * Presented length of the movie: the longest of the movie header and each track header.
+ * A track with no edit list plays its whole media, so its media header (mdhd) counts too;
+ * with an edit list the media may be longer than what plays, so it doesn't.
+ * Fragmented MP4s (mvex) keep the real length in the fragments and are rejected, not priced.
+ */
+function moovDuration(moov: Uint8Array): number | null {
+  let best = 0, movieScale = 0;
+  const box = (j: number, end: number) => {
+    if (j + 8 > end) return null;
+    const m = new DataView(moov.buffer, moov.byteOffset + j, end - j);
+    const size = m.getUint32(0);
+    if (size < 8 || j + size > end) return null; // truncated (moov over 8 MB): stop here
+    return { m, size, type: String.fromCharCode(...moov.slice(j + 4, j + 8)), v: moov[j + 8] };
+  };
+  const hd = (b: { m: DataView; v: number }) => // mvhd/mdhd: [timescale, duration]
+    b.v === 1 ? [b.m.getUint32(28), Number(b.m.getBigUint64(32))] : [b.m.getUint32(20), b.m.getUint32(24)];
+  for (let j = 0, b; (b = box(j, moov.length)); j += b.size) {
+    if (b.type === "mvex") return null;
+    if (b.type === "mvhd") {
+      const [ts, d] = hd(b);
+      if (!ts) return null;
+      movieScale = ts;
+      best = Math.max(best, d / ts);
+    } else if (b.type === "trak" && movieScale) {
+      let edited = false, media = 0;
+      const tEnd = j + b.size;
+      for (let k = j + 8, c; (c = box(k, tEnd)); k += c.size) {
+        if (c.type === "edts") edited = true;
+        if (c.type === "tkhd") best = Math.max(best, (c.v === 1 ? Number(c.m.getBigUint64(36)) : c.m.getUint32(28)) / movieScale);
+        if (c.type === "mdia") {
+          for (let l = k + 8, e; (e = box(l, k + c.size)); l += e.size) {
+            if (e.type === "mdhd") { const [ts, d] = hd(e); if (ts) media = d / ts; }
+          }
+        }
+      }
+      if (!edited) best = Math.max(best, media);
+    }
+  }
+  return movieScale ? best : null;
 }
 
 /** Fetch status from Higgsfield, persist it on the job, refund on failure. */
@@ -143,15 +172,22 @@ export async function syncJob(job: Job) {
   const s = await r.json();
   const patch: Record<string, unknown> = { status: s.status, updated_at: new Date().toISOString() };
   if (s.video?.url) patch.output_url = s.video.url;
-  if (s.error) patch.error = String(s.error).slice(0, 500);
+  if (s.error) { // users see a plain message; the provider's raw text stays in the logs
+    console.error("higgsfield job failed", job.id, String(s.error).slice(0, 500));
+    patch.error = "The render failed. Your credits were refunded.";
+  }
   if (s.status === "nsfw") patch.error = "The content was flagged by moderation. Your credits were refunded.";
   const { data } = await admin.from("jobs").update(patch).eq("id", job.id).select().single();
   if (["failed", "nsfw", "canceled"].includes(s.status)) await admin.rpc("refund_job", { p_job: job.id });
   if (TERMINAL.has(s.status)) await deleteInputs(job);
+  if (s.status === "completed" && s.video?.url && job.billed_secs) { // pricing sanity check
+    const out = await mp4Duration(s.video.url).catch(() => null);
+    if (out && out > job.billed_secs + 1) console.warn("output longer than billed", job.id, out, job.billed_secs);
+  }
   return data ?? job;
 }
 
-type Job = { id: string; hf_request_id: string | null; status: string; created_at?: string; video_url?: string; image_urls?: unknown };
+type Job = { id: string; hf_request_id: string | null; status: string; created_at?: string; video_url?: string; image_urls?: unknown; billed_secs?: number | null };
 const MOCK_OUTPUT = `${PRESETS_PUBLIC}qa-4s.mp4`;
 
 /** Test-mode jobs: queued -> in_progress -> completed/failed over ~20s, no Higgsfield call. */
