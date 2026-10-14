@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 DOCS = ROOT / "docs"
-DATA = json.loads((SITE / "trends.json").read_text())
+DATA = json.loads((SITE / "trends.json").read_text(encoding="utf-8"))
 BASE = DATA["base_url"]
 ALL_TRENDS = DATA["trends"]
 # hidden trends (e.g. the 4s QA clip) get a page but stay out of the gallery, links and sitemap
@@ -289,7 +289,7 @@ STUDIO_CUSTOM = """    <section class="card studio" id="studio">
 def write(rel, content):
     p = DOCS / rel
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(content)
+    p.write_text(content, encoding="utf-8")
     print("wrote", rel)
 
 
@@ -452,7 +452,7 @@ custom += footer("../", page={"kind": "custom"})
 write("custom/index.html", custom)
 
 # ---------------- genjutsu article ----------------
-gfaq = json.loads((SITE / "genjutsu_faq.json").read_text())
+gfaq = json.loads((SITE / "genjutsu_faq.json").read_text(encoding="utf-8"))
 g = head(path="genjutsu/", title="Higgsfield Genjutsu Without Subscription: Pay-Per-Video Motion Transfer",
          description="Use Higgsfield Genjutsu (motion transfer and object swap) with no subscription. Limits, price per second, and how to make a video in minutes.",
          og_type="article", image=f"{BASE}og.jpg", extra_ld=ld(faq_ld(gfaq), breadcrumbs(("Trends", ""), ("Higgsfield Genjutsu", "genjutsu/"))))
@@ -461,7 +461,7 @@ g += f"""  <main>
     <article class="article">
       <div class="crumbs"><a href="../">Trends</a> › Higgsfield Genjutsu</div>
       <h1>Higgsfield Genjutsu, No Subscription</h1>
-{(SITE / 'genjutsu_body.html').read_text()}    </article>
+{(SITE / 'genjutsu_body.html').read_text(encoding="utf-8")}    </article>
   </main>
 """
 g += footer("../", app=False)
